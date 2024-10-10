@@ -44,12 +44,12 @@ const InputField = <TFieldValues extends FieldValues>({
 
 export const OptionContainer = ({
     keyString,
-    section,
+    sectionName,
 }: {
-    section: string;
+    sectionName: string;
     keyString: string;
 }) => {
-    const { control, watch, setValue } = useFormContext();
+    const { control, watch, setValue, getFieldState } = useFormContext();
     const [isEditing, setIsEditing] = useState(false);
 
     const { toggleModal: toggleDeleteModal, actionModal: deletePropModal } =
@@ -58,8 +58,10 @@ export const OptionContainer = ({
         useEditPropModal();
     const { showToast } = useToast();
 
-    const name = `${section}[${keyString}]`;
+    const name = `${sectionName}[${keyString}]`;
     const value = watch(name);
+    const section = watch(sectionName);
+
     const [inputState, setInputState] = useState(value);
 
     let _value = value;
@@ -85,19 +87,20 @@ export const OptionContainer = ({
                             onEdit={() => setIsEditing(true)}
                             onDelete={(e) => {
                                 e.stopPropagation();
-                                // todo(kon): a ver como eliminar
-                                // deletePropModal(keyString, () => {
-                                //     console.log("delete stuff");
-                                //     toggleDeleteModal();
-                                //     showToast({
-                                //         text: (
-                                //             <Trans>Deleted {keyString}</Trans>
-                                //         ),
-                                //         onAction: () => {
-                                //             console.log("Undo action");
-                                //         },
-                                //     });
-                                // });
+                                deletePropModal(keyString, () => {
+                                    const newValues = { ...section };
+                                    delete newValues[keyString];
+                                    setValue(sectionName, newValues);
+                                    toggleDeleteModal();
+                                    showToast({
+                                        text: (
+                                            <Trans>Deleted {keyString}</Trans>
+                                        ),
+                                        onAction: () => {
+                                            setValue(sectionName, section);
+                                        },
+                                    });
+                                });
                             }}
                         />
                     </div>
@@ -126,6 +129,14 @@ export const OptionContainer = ({
                                                 onClick={() => {
                                                     setValue(name, inputState);
                                                     setIsEditing(false);
+                                                    showToast({
+                                                        text: (
+                                                            <Trans>
+                                                                Edited{" "}
+                                                                {keyString}
+                                                            </Trans>
+                                                        ),
+                                                    });
                                                 }}
                                                 outline={true}
                                             >
@@ -136,14 +147,6 @@ export const OptionContainer = ({
                                                 onClick={() => {
                                                     setInputState(value);
                                                     setIsEditing(false);
-                                                    showToast({
-                                                        text: (
-                                                            <Trans>
-                                                                Edited{" "}
-                                                                {keyString}
-                                                            </Trans>
-                                                        ),
-                                                    });
                                                 }}
                                                 outline={true}
                                             >
