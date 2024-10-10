@@ -15,14 +15,20 @@ import {
 } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
 import { IMeshWideSection } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 
-export const ConfigSection = ({ dropdown }: { dropdown: IMeshWideSection }) => {
+export const ConfigSection = ({
+    title,
+    dropdown,
+}: {
+    title: string;
+    dropdown: IMeshWideSection;
+}) => {
     return (
         <Collapsible
-            title={dropdown.name}
+            title={title}
             initCollapsed={true}
-            optionsComponent={<SectionEditOrDelete name={dropdown.name} />}
+            optionsComponent={<SectionEditOrDelete name={title} />}
         >
-            {Object.entries(dropdown.options).map(([key, value]) => (
+            {Object.entries(dropdown).map(([key, value]) => (
                 <OptionContainer key={key} keyString={key} value={value} />
             ))}
         </Collapsible>
