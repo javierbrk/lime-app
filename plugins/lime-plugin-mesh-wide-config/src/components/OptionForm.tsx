@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { list } from "postcss";
 import { useState } from "preact/hooks";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -13,15 +14,18 @@ import {
     DeletePropModal,
     EditPropModal,
 } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
+import { ConfigItemType } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 
 const EditOptionForm = ({
     keyString,
     value,
     onSubmit,
+    onCancel,
 }: {
     keyString: string;
-    value: string;
+    value: ConfigItemType;
     onSubmit?: (data) => void;
+    onCancel?: () => void;
 }) => {
     const {
         register,
@@ -50,9 +54,14 @@ const EditOptionForm = ({
                 label={<Trans>Value</Trans>}
                 register={register}
             />
-            <Button onClick={handleSubmit(_onSubmit)} outline={true}>
-                <Trans>Done</Trans>
-            </Button>
+            <div className={"flex flex-row gap-4"}>
+                <Button onClick={handleSubmit(_onSubmit)} outline={true}>
+                    <Trans>Done</Trans>
+                </Button>
+                <Button color={"danger"} onClick={onCancel} outline={true}>
+                    <Trans>Cancel</Trans>
+                </Button>
+            </div>
         </form>
     );
 };
@@ -62,7 +71,7 @@ export const OptionContainer = ({
     value,
 }: {
     keyString: string;
-    value: string;
+    value: ConfigItemType;
 }) => {
     const {
         open: isDeleteModalOpen,
@@ -89,6 +98,18 @@ export const OptionContainer = ({
 
     const toggleIsEditing = () => setIsEditing(!isEditing);
 
+    const { toggleModal: toggleDeleteModal, actionModal: deletePropModal } =
+        useDeletePropModal();
+    const { toggleModal: toggleEditModal, actionModal: editPropertyModal } =
+        useEditPropModal();
+    const { showToast } = useToast();
+
+    let _value = value;
+    const isList = Array.isArray(value);
+    if (isList) {
+        _value = value.join(", ");
+    }
+
     return (
         <div class={"px-4"}>
             <div className={"flex justify-center"}>
@@ -102,18 +123,21 @@ export const OptionContainer = ({
                                 "flex flex-row items-center justify-between"
                             }
                         >
-                            <div>{keyString}</div>
+                            <div>
+                                {isList && <Trans>(List)</Trans>} {keyString}
+                            </div>
                             <EditOrDelete
                                 onEdit={toggleIsEditing}
                                 onDelete={openDeleteModal}
                             />
                         </div>
-                        <div>{value}</div>
+                        <div>{_value}</div>
                     </>
                 ) : (
                     <EditOptionForm
                         keyString={keyString}
                         value={value}
+                        onCancel={toggleIsEditing}
                         onSubmit={(data) => {
                             console.log("edited stuff", data);
                             toggleIsEditing();
