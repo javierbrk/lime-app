@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { useFormContext } from "react-hook-form";
 
 import { useDisclosure } from "components/Modal/useDisclosure";
 import { Button } from "components/buttons/button";
@@ -14,6 +15,7 @@ import {
     EditPropModal,
 } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
 import { IMeshWideSection } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
+import { EditOrDelete } from "plugins/lime-plugin-mesh-wide/src/components/Components";
 
 export const ConfigSection = ({
     title,
