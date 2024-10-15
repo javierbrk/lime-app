@@ -56,20 +56,28 @@ export const AddNewSectionModal = ({
         defaultValues: { name: "" },
     });
 
-    return (
-        <Modal
-            title={<Trans>Add new section</Trans>}
-            successBtnText={<Trans>Add</Trans>}
-            {...rest}
-            onSuccess={handleSubmit(onSuccess)}
-        >
-            <div>
-                <InputField
-                    id={"name"}
-                    label={<Trans>Name</Trans>}
-                    register={register}
-                />
-            </div>
-        </Modal>
+    const actionModal = useCallback(
+        (actionCb: (data) => void, sectionName?: string) => {
+            let title = <Trans>Add new section</Trans>;
+            if (sectionName) {
+                title = <Trans>Add new section for {sectionName}</Trans>;
+            }
+            setModalState({
+                content: (
+                    <div>
+                        <InputField
+                            id={"name"}
+                            label={<Trans>Name</Trans>}
+                            register={register}
+                        />
+                    </div>
+                ),
+                title,
+                successCb: handleSubmit(actionCb),
+                successBtnText: <Trans>Add</Trans>,
+            });
+            toggleModal();
+        },
+        [handleSubmit, register, setModalState, toggleModal]
     );
 };

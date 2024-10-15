@@ -37,6 +37,7 @@ export const ConfigSection = ({
                     keyString={key}
                 />
             ))}
+            <AddNewElementBtn sectionName={title} />
         </Collapsible>
     );
 };
@@ -103,31 +104,33 @@ export const SectionEditOrDelete = ({ name }) => {
     );
 };
 
-export const AddNewSectionBtn = () => {
-    const { open, onOpen, onClose } = useDisclosure();
+export const AddNewElementBtn = ({ sectionName }: { sectionName?: string }) => {
+    const { toggleModal: toggleNewSectionModal, actionModal: addSectionModal } =
+        useAddNewSectionModal();
+    const { watch, setValue } = useFormContext<IMeshWideConfig>();
+    const section = watch(sectionName);
+
     const { showToast } = useToast();
 
-    const onSuccess = (data: AddNewSectionFormProps) => {
-        console.log(`Added`, data);
-        onClose();
-        showToast({
-            text: (
-                <Trans>
-                    Added section {data.name} - {new Date().toDateString()}
-                </Trans>
-            ),
-        });
-    };
     return (
-        <>
-            <Button color={"info"} onClick={onOpen}>
-                <Trans>Add new section</Trans>
-            </Button>
-            <AddNewSectionModal
-                isOpen={open}
-                onSuccess={onSuccess}
-                onClose={onClose}
-            />
-        </>
+        <Button
+            color={"info"}
+            onClick={() => {
+                addSectionModal((data) => {
+                    if (!sectionName) {
+                        setValue(data.name, {});
+                    } else {
+                        const kaka = { ...section, [data.name]: "" };
+                        setValue(sectionName, kaka);
+                    }
+                    toggleNewSectionModal();
+                    showToast({
+                        text: <Trans>Added section {data.name}</Trans>,
+                    });
+                }, sectionName);
+            }}
+        >
+            <Trans>Add new section</Trans>
+        </Button>
     );
 };
