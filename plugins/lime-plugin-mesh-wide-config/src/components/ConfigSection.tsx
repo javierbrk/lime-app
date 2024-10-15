@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { useFormContext } from "react-hook-form";
 
 import { useDisclosure } from "components/Modal/useDisclosure";
-import { Button } from "components/buttons/button";
+import { Button, ButtonProps } from "components/buttons/button";
 import { Collapsible } from "components/collapsible";
 import { useToast } from "components/toast/toastProvider";
 
@@ -113,8 +113,7 @@ export const AddNewElementBtn = ({ sectionName }: { sectionName?: string }) => {
     const { showToast } = useToast();
 
     return (
-        <Button
-            color={"info"}
+        <AddElementButton
             onClick={() => {
                 addSectionModal((data) => {
                     if (!sectionName) {
@@ -129,7 +128,13 @@ export const AddNewElementBtn = ({ sectionName }: { sectionName?: string }) => {
                     });
                 }, sectionName);
             }}
-        >
+        />
+    );
+};
+
+export const AddElementButton = (props: ButtonProps) => {
+    return (
+        <Button color={"info"} {...props}>
             <Trans>Add new section</Trans>
         </Button>
     );
