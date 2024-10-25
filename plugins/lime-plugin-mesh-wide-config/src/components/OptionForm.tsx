@@ -7,13 +7,8 @@ import { Button } from "components/buttons/button";
 import Divider from "components/divider";
 import { useToast } from "components/toast/toastProvider";
 
-import { AddElementButton } from "plugins/lime-plugin-mesh-wide-config/src/components/ConfigSection";
 import { EditOrDelete } from "plugins/lime-plugin-mesh-wide-config/src/components/Components";
-import {
-    DeletePropModal,
-    EditPropModal,
-} from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
-import { ConfigItemType } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
+import { DeletePropModal } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
 
 type OptionContainerProps = {
     sectionName: string;
@@ -26,12 +21,26 @@ export const OptionContainer = ({
 }: OptionContainerProps) => {
     const { watch, setValue } = useFormContext();
     const [isEditing, setIsEditing] = useState(false);
+    const {
+        open: isDeleteModalOpen,
+        onOpen: openDeleteModal,
+        onClose: onCloseDeleteModal,
+    } = useDisclosure();
 
-    const { toggleModal: toggleDeleteModal, actionModal: deletePropModal } =
-        useDeletePropModal();
-    // const { toggleModal: toggleEditModal, actionModal: editPropertyModal } =
-    //     useEditPropModal();
     const { showToast } = useToast();
+
+    const onDelete = async () => {
+        const newValues = { ...section };
+        delete newValues[keyString];
+        setValue(sectionName, newValues);
+        onCloseDeleteModal();
+        showToast({
+            text: <Trans>Deleted {keyString}</Trans>,
+            onAction: () => {
+                setValue(sectionName, section);
+            },
+        });
+    };
 
     const name = `${sectionName}[${keyString}]`;
     const value = watch(name);
@@ -58,23 +67,7 @@ export const OptionContainer = ({
                         </div>
                         <EditOrDelete
                             onEdit={() => setIsEditing((prev) => !prev)}
-                            onDelete={(e) => {
-                                e.stopPropagation();
-                                deletePropModal(keyString, () => {
-                                    const newValues = { ...section };
-                                    delete newValues[keyString];
-                                    setValue(sectionName, newValues);
-                                    toggleDeleteModal();
-                                    showToast({
-                                        text: (
-                                            <Trans>Deleted {keyString}</Trans>
-                                        ),
-                                        onAction: () => {
-                                            setValue(sectionName, section);
-                                        },
-                                    });
-                                });
-                            }}
+                            onDelete={openDeleteModal}
                         />
                     </div>
                     {!isEditing && <div>{_value}</div>}
@@ -151,7 +144,7 @@ const EditableField = ({
                             )}
                         />
                     ))}
-                    <AddElementButton onClick={addListItem} />
+                    {/*<AddElementButton onClick={addListItem} />*/}
                 </div>
             ) : (
                 <>

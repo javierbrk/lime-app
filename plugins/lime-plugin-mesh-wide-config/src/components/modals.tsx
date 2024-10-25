@@ -43,11 +43,12 @@ export interface AddNewSectionFormProps {
 
 export const AddNewSectionModal = ({
     onSuccess,
+    sectionName,
     ...rest
-}: { onSuccess: (data: AddNewSectionFormProps) => void } & Pick<
-    ModalProps,
-    "isOpen" | "onClose"
->) => {
+}: {
+    onSuccess: (data: AddNewSectionFormProps) => void;
+    sectionName?: string;
+} & Pick<ModalProps, "isOpen" | "onClose">) => {
     const {
         register,
         handleSubmit,
@@ -56,28 +57,25 @@ export const AddNewSectionModal = ({
         defaultValues: { name: "" },
     });
 
-    const actionModal = useCallback(
-        (actionCb: (data) => void, sectionName?: string) => {
-            let title = <Trans>Add new section</Trans>;
-            if (sectionName) {
-                title = <Trans>Add new section for {sectionName}</Trans>;
-            }
-            setModalState({
-                content: (
-                    <div>
-                        <InputField
-                            id={"name"}
-                            label={<Trans>Name</Trans>}
-                            register={register}
-                        />
-                    </div>
-                ),
-                title,
-                successCb: handleSubmit(actionCb),
-                successBtnText: <Trans>Add</Trans>,
-            });
-            toggleModal();
-        },
-        [handleSubmit, register, setModalState, toggleModal]
+    let title = <Trans>Add new section</Trans>;
+    if (sectionName) {
+        title = <Trans>Add new section for {sectionName}</Trans>;
+    }
+
+    return (
+        <Modal
+            title={title}
+            successBtnText={<Trans>Add</Trans>}
+            {...rest}
+            onSuccess={handleSubmit(onSuccess)}
+        >
+            <div>
+                <InputField
+                    id={"name"}
+                    label={<Trans>Name</Trans>}
+                    register={register}
+                />
+            </div>
+        </Modal>
     );
 };
