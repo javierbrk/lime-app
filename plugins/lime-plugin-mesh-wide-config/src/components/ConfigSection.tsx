@@ -14,8 +14,10 @@ import {
     DeletePropModal,
     EditPropModal,
 } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
-import { IMeshWideSection } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
-import { EditOrDelete } from "plugins/lime-plugin-mesh-wide/src/components/Components";
+import {
+    IMeshWideConfig,
+    IMeshWideSection,
+} from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 
 export const ConfigSection = ({
     title,
@@ -105,37 +107,36 @@ export const SectionEditOrDelete = ({ name }) => {
 };
 
 export const AddNewElementBtn = ({ sectionName }: { sectionName?: string }) => {
-    const { toggleModal: toggleNewSectionModal, actionModal: addSectionModal } =
-        useAddNewSectionModal();
+    const { open, onOpen, onClose } = useDisclosure();
+    const { showToast } = useToast();
+
     const { watch, setValue } = useFormContext<IMeshWideConfig>();
     const section = watch(sectionName);
 
-    const { showToast } = useToast();
+    const onSuccess = (data: AddNewSectionFormProps) => {
+        if (!sectionName) {
+            setValue(data.name, {});
+        } else {
+            const kaka = { ...section, [data.name]: "" };
+            setValue(sectionName, kaka);
+        }
+        onClose();
+        showToast({
+            text: <Trans>Added section {data.name}</Trans>,
+        });
+    };
 
     return (
-        <AddElementButton
-            onClick={() => {
-                addSectionModal((data) => {
-                    if (!sectionName) {
-                        setValue(data.name, {});
-                    } else {
-                        const kaka = { ...section, [data.name]: "" };
-                        setValue(sectionName, kaka);
-                    }
-                    toggleNewSectionModal();
-                    showToast({
-                        text: <Trans>Added section {data.name}</Trans>,
-                    });
-                }, sectionName);
-            }}
-        />
-    );
-};
-
-export const AddElementButton = (props: ButtonProps) => {
-    return (
-        <Button color={"info"} {...props}>
-            <Trans>Add new section</Trans>
-        </Button>
+        <>
+            <Button color={"info"} onClick={onOpen}>
+                <Trans>Add new section</Trans>
+            </Button>
+            <AddNewSectionModal
+                sectionName={sectionName}
+                isOpen={open}
+                onSuccess={onSuccess}
+                onClose={onClose}
+            />
+        </>
     );
 };
