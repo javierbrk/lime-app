@@ -1,8 +1,12 @@
 import { Trans } from "@lingui/macro";
-import { useForm } from "react-hook-form";
+import { Label } from "@tanstack/react-query-devtools/build/lib/Explorer";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { Modal, ModalProps } from "components/Modal/Modal";
 import InputField from "components/inputs/InputField";
+import switchStyle from "components/switch";
+
+import { EditableField } from "plugins/lime-plugin-mesh-wide-config/src/components/OptionForm";
 
 export const DeletePropModal = ({
     prop,
@@ -39,6 +43,9 @@ export const EditPropModal = ({
 
 export interface AddNewSectionFormProps {
     name: string;
+    value?: string;
+    values?: string[];
+    isList?: boolean;
 }
 
 export const AddNewSectionModal = ({
@@ -49,18 +56,24 @@ export const AddNewSectionModal = ({
     onSuccess: (data: AddNewSectionFormProps) => void;
     sectionName?: string;
 } & Pick<ModalProps, "isOpen" | "onClose">) => {
+    const fmethods = useForm<AddNewSectionFormProps>({
+        defaultValues: { name: "", value: "", values: [""], isList: false },
+    });
+
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
-    } = useForm<AddNewSectionFormProps>({
-        defaultValues: { name: "" },
-    });
+        watch,
+    } = fmethods;
 
     let title = <Trans>Add new section</Trans>;
     if (sectionName) {
         title = <Trans>Add new section for {sectionName}</Trans>;
     }
+
+    const isList = watch("isList");
 
     return (
         <Modal
@@ -69,13 +82,37 @@ export const AddNewSectionModal = ({
             {...rest}
             onSuccess={handleSubmit(onSuccess)}
         >
-            <div>
+            <FormProvider {...fmethods}>
                 <InputField
                     id={"name"}
                     label={<Trans>Name</Trans>}
                     register={register}
+                    options={{
+                        required: "Name is required",
+                        minLength: { value: 1, message: "Minimum length is 1" },
+                    }}
+                    error={errors.name?.message}
                 />
-            </div>
+                {sectionName && (
+                    <>
+                        <div className={switchStyle.toggles}>
+                            <input
+                                type="checkbox"
+                                id="enabled"
+                                {...register("isList")}
+                            />
+                            <label htmlFor="enabled">
+                                <Trans>Is a list</Trans>
+                            </label>
+                        </div>
+                        <Label>Value</Label>
+                        <EditableField
+                            name={isList ? "values" : "value"}
+                            isList={isList}
+                        />
+                    </>
+                )}
+            </FormProvider>
         </Modal>
     );
 };

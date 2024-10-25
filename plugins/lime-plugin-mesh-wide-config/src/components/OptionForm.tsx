@@ -8,6 +8,7 @@ import Divider from "components/divider";
 import { useToast } from "components/toast/toastProvider";
 
 import { EditOrDelete } from "plugins/lime-plugin-mesh-wide-config/src/components/Components";
+import { AddElementButton } from "plugins/lime-plugin-mesh-wide-config/src/components/ConfigSection";
 import { DeletePropModal } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
 
 type OptionContainerProps = {
@@ -91,7 +92,7 @@ export const OptionContainer = ({
     );
 };
 
-const EditableField = ({
+export const EditableField = ({
     isList,
     name,
     keyString,
@@ -99,13 +100,13 @@ const EditableField = ({
 }: {
     isList: boolean;
     name: string;
-    setIsEditing: StateUpdater<boolean>;
-} & Omit<OptionContainerProps, "sectionName">) => {
+    keyString?: string;
+    setIsEditing?: StateUpdater<boolean>;
+}) => {
     const { control, setValue, watch, getValues } = useFormContext();
-    const { showToast } = useToast();
+    // const { showToast } = useToast();
     const value = watch(name);
     const [initialState] = useState(value);
-    // const currentValues = getValues(listName);
 
     const removeListItem = (index) => {
         const updatedValues = value.filter((_, i) => i !== index);
@@ -144,7 +145,7 @@ const EditableField = ({
                             )}
                         />
                     ))}
-                    {/*<AddElementButton onClick={addListItem} />*/}
+                    <AddElementButton onClick={addListItem} />
                 </div>
             ) : (
                 <>
@@ -163,32 +164,28 @@ const EditableField = ({
                     />
                 </>
             )}
-            <div className={"flex flex-row gap-4"}>
-                <Button
-                    onClick={() => {
-                        setIsEditing(false);
-                        showToast({
-                            text: <Trans>Edited {keyString}</Trans>,
-                            onAction: () => {
-                                setValue(name, initialState);
-                            },
-                        });
-                    }}
-                    outline={true}
-                >
-                    <Trans>Done</Trans>
-                </Button>
-                <Button
-                    color={"danger"}
-                    onClick={() => {
-                        setValue(name, initialState);
-                        setIsEditing(false);
-                    }}
-                    outline={true}
-                >
-                    <Trans>Cancel</Trans>
-                </Button>
-            </div>
+            {setIsEditing && (
+                <div className={"flex flex-row gap-4"}>
+                    <Button
+                        onClick={() => {
+                            setIsEditing(false);
+                        }}
+                        outline={true}
+                    >
+                        <Trans>Done</Trans>
+                    </Button>
+                    <Button
+                        color={"danger"}
+                        onClick={() => {
+                            setValue(name, initialState);
+                            setIsEditing(false);
+                        }}
+                        outline={true}
+                    >
+                        <Trans>Cancel</Trans>
+                    </Button>
+                </div>
+            )}
         </>
     );
 };

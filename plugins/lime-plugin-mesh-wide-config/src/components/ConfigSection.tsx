@@ -117,8 +117,14 @@ export const AddNewElementBtn = ({ sectionName }: { sectionName?: string }) => {
         if (!sectionName) {
             setValue(data.name, {});
         } else {
-            const kaka = { ...section, [data.name]: "" };
-            setValue(sectionName, kaka);
+            let value: string | string[] = data.value;
+            if (data.isList) {
+                value = data.values;
+            }
+            setValue(sectionName, {
+                ...section,
+                [data.name]: value,
+            });
         }
         onClose();
         showToast({
@@ -128,9 +134,7 @@ export const AddNewElementBtn = ({ sectionName }: { sectionName?: string }) => {
 
     return (
         <>
-            <Button color={"info"} onClick={onOpen}>
-                <Trans>Add new section</Trans>
-            </Button>
+            <AddElementButton onClick={onOpen} />
             <AddNewSectionModal
                 sectionName={sectionName}
                 isOpen={open}
@@ -138,5 +142,13 @@ export const AddNewElementBtn = ({ sectionName }: { sectionName?: string }) => {
                 onClose={onClose}
             />
         </>
+    );
+};
+
+export const AddElementButton = (props: ButtonProps) => {
+    return (
+        <Button color={"info"} {...props}>
+            <Trans>Add new section</Trans>
+        </Button>
     );
 };
