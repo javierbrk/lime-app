@@ -8,11 +8,13 @@ const InputField = <TFieldValues extends FieldValues>({
     label,
     register,
     options,
+    error,
 }: {
     id: Path<TFieldValues>;
     label: string | ComponentChild;
     register?: UseFormRegister<TFieldValues>;
     options?: RegisterOptions;
+    error?: string | ComponentChild;
 }) => {
     return (
         <div>
@@ -24,6 +26,7 @@ const InputField = <TFieldValues extends FieldValues>({
                 {...register(id, { ...options })}
                 className="w-100"
             />
+            {error && <p class="text-red-500 text-md mt-1">{error}</p>}
         </div>
     );
 };
