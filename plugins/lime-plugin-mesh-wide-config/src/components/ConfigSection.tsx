@@ -39,7 +39,7 @@ export const ConfigSection = ({
                     keyString={key}
                 />
             ))}
-            <AddNewElementBtn sectionName={title} />
+            <AddNewConfigSection sectionName={title} />
         </Collapsible>
     );
 };
@@ -106,7 +106,11 @@ export const SectionEditOrDelete = ({ name }) => {
     );
 };
 
-export const AddNewElementBtn = ({ sectionName }: { sectionName?: string }) => {
+export const AddNewConfigSection = ({
+    sectionName,
+}: {
+    sectionName?: string;
+}) => {
     const { open, onOpen, onClose } = useDisclosure();
     const { showToast } = useToast();
 

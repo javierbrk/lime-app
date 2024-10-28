@@ -1,5 +1,5 @@
-import { Trans } from "@lingui/macro";
-import { StateUpdater, useState } from "preact/hooks";
+import { Trans, t } from "@lingui/macro";
+import { StateUpdater, useEffect, useState } from "preact/hooks";
 import { Controller, useFormContext } from "react-hook-form";
 
 import { useDisclosure } from "components/Modal/useDisclosure";
@@ -104,7 +104,6 @@ export const EditableField = ({
     setIsEditing?: StateUpdater<boolean>;
 }) => {
     const { control, setValue, watch, getValues } = useFormContext();
-    // const { showToast } = useToast();
     const value = watch(name);
     const [initialState] = useState(value);
 
@@ -117,6 +116,13 @@ export const EditableField = ({
         setValue(name, [...value, ""]); // Update form values
     };
 
+    // Ensure the list has at least one item at the start
+    useEffect(() => {
+        if (isList && value.length === 0) {
+            setValue(name, [""]);
+        }
+    }, [isList, value, name, setValue]);
+
     return (
         <>
             {isList ? (
@@ -126,6 +132,13 @@ export const EditableField = ({
                             key={index}
                             control={control}
                             name={`${name}[${index}]`}
+                            rules={{
+                                minLength: {
+                                    value: 1,
+                                    message: t`Minimum length is 1`,
+                                },
+                                required: t`This field cannot be empty`,
+                            }}
                             render={({ field }) => (
                                 <div
                                     className={
@@ -154,12 +167,7 @@ export const EditableField = ({
                         name={name}
                         control={control}
                         render={({ field }) => (
-                            <input
-                                type="text"
-                                data-testid="password-input"
-                                className="w-100"
-                                {...field}
-                            />
+                            <input type="text" className="w-100" {...field} />
                         )}
                     />
                 </>

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { Label } from "@tanstack/react-query-devtools/build/lib/Explorer";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -60,12 +60,18 @@ export const AddNewSectionModal = ({
         defaultValues: { name: "", value: "", values: [""], isList: false },
     });
 
+    const handleSuccess = (data: AddNewSectionFormProps) => {
+        onSuccess(data); // Call the parent onSuccess handler
+        reset(); // Reset the form after successful submission
+    };
+
     const {
         register,
         handleSubmit,
         setValue,
         formState: { errors },
         watch,
+        reset,
     } = fmethods;
 
     let title = <Trans>Add new section</Trans>;
@@ -80,7 +86,7 @@ export const AddNewSectionModal = ({
             title={title}
             successBtnText={<Trans>Add</Trans>}
             {...rest}
-            onSuccess={handleSubmit(onSuccess)}
+            onSuccess={handleSubmit(handleSuccess)}
         >
             <FormProvider {...fmethods}>
                 <InputField
@@ -88,8 +94,11 @@ export const AddNewSectionModal = ({
                     label={<Trans>Name</Trans>}
                     register={register}
                     options={{
-                        required: "Name is required",
-                        minLength: { value: 1, message: "Minimum length is 1" },
+                        required: t`This field cannot be empty`,
+                        minLength: {
+                            value: 1,
+                            message: t`Minimum length is 1`,
+                        },
                     }}
                     error={errors.name?.message}
                 />
