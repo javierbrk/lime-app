@@ -13,14 +13,14 @@ import {
 } from "components/Modal/FullScreenModal";
 
 import {
-    AddNewElementBtn,
+    AddNewConfigSection,
     ConfigSection,
 } from "plugins/lime-plugin-mesh-wide-config/src/components/ConfigSection";
 import { MeshStatus } from "plugins/lime-plugin-mesh-wide-config/src/components/MeshStatus";
 import { useMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { IMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 
-const EditConfiguration = (props: Partial<IFullScreenModalProps>) => {
+const LimeConfigEditForm = (props: Partial<IFullScreenModalProps>) => {
     const { data: meshWideConfig, isLoading } = useMeshWideConfig({});
 
     return (
@@ -30,14 +30,13 @@ const EditConfiguration = (props: Partial<IFullScreenModalProps>) => {
             {...props}
         >
             {!!meshWideConfig && (
-                // <DynamicForm meshWideConfig={meshWideConfig} />
-                <EditConfigurationInner meshWideConfig={meshWideConfig} />
+                <EditConfigForm meshWideConfig={meshWideConfig} />
             )}
         </FullScreenModal>
     );
 };
 
-const EditConfigurationInner = ({
+const EditConfigForm = ({
     meshWideConfig,
 }: {
     meshWideConfig: IMeshWideConfig;
@@ -46,34 +45,33 @@ const EditConfigurationInner = ({
         defaultValues: meshWideConfig,
     });
 
+    const formData = fMethods.watch();
+
     const onSubmit = (data) => {
         console.log("Form Data:", data);
     };
+
     return (
-        <FormProvider {...fMethods}>
-            <form onSubmit={fMethods.handleSubmit(onSubmit)}>
-                <div className={"flex flex-col gap-3"}>
-                    <DrawForm />
-                    <AddNewElementBtn />
-                </div>
-                <MeshStatus />
-            </form>
-        </FormProvider>
+        <div className={"flex flex-col h-full w-full max-h-full"}>
+            <FormProvider {...fMethods}>
+                <form onSubmit={fMethods.handleSubmit(onSubmit)}>
+                    <div className={"flex flex-col gap-3"}>
+                        {Object.entries(formData).map(
+                            ([title, dropdown], index) => (
+                                <ConfigSection
+                                    key={index}
+                                    title={title}
+                                    dropdown={dropdown}
+                                />
+                            )
+                        )}
+                        <AddNewConfigSection />
+                    </div>
+                    <MeshStatus />
+                </form>
+            </FormProvider>
+        </div>
     );
 };
 
-const DrawForm = () => {
-    const { watch } = useFormContext<IMeshWideConfig>();
-    const formData = watch();
-
-    console.log("formData", formData);
-    return (
-        <>
-            {Object.entries(formData).map(([title, dropdown], index) => (
-                <ConfigSection key={index} title={title} dropdown={dropdown} />
-            ))}
-        </>
-    );
-};
-
-export default EditConfiguration;
+export default LimeConfigEditForm;

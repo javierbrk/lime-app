@@ -3,7 +3,7 @@ import React from "react";
 
 import WizardWrapper from "components/mesh-wide-wizard/WizardWrapper";
 
-import EditConfiguration from "plugins/lime-plugin-mesh-wide-config/src/containers/EditConfiguration";
+import LimeConfigEditForm from "plugins/lime-plugin-mesh-wide-config/src/containers/LimeConfigEditForm";
 import NodesListPage from "plugins/lime-plugin-mesh-wide-config/src/containers/NodesListPage";
 import StatusPage from "plugins/lime-plugin-mesh-wide-config/src/containers/StatusPage";
 
@@ -11,7 +11,7 @@ const MeshConfigPage = () => {
     const [showEditConfig, setShowEditConfig] = useState(false);
 
     if (showEditConfig) {
-        return <EditConfiguration onClose={() => setShowEditConfig(false)} />;
+        return <LimeConfigEditForm onClose={() => setShowEditConfig(false)} />;
     }
 
     // return <Button onClick={() => setShowEditConfig(true)}>Show modal</Button>;
