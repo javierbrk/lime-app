@@ -6,7 +6,7 @@ import { Modal, ModalProps } from "components/Modal/Modal";
 import InputField from "components/inputs/InputField";
 import switchStyle from "components/switch";
 
-import { EditableField } from "plugins/lime-plugin-mesh-wide-config/src/components/OptionForm";
+import { EditableField } from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
 
 export const DeletePropModal = ({
     prop,
@@ -68,7 +68,6 @@ export const AddNewSectionModal = ({
     const {
         register,
         handleSubmit,
-        setValue,
         formState: { errors },
         watch,
         reset,
@@ -92,14 +91,13 @@ export const AddNewSectionModal = ({
                 <InputField
                     id={"name"}
                     label={<Trans>Name</Trans>}
-                    register={register}
-                    options={{
+                    {...register("name", {
                         required: t`This field cannot be empty`,
                         minLength: {
                             value: 1,
                             message: t`Minimum length is 1`,
                         },
-                    }}
+                    })}
                     error={errors.name?.message}
                 />
                 {sectionName && (

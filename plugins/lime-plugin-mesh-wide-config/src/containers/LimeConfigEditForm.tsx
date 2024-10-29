@@ -1,21 +1,14 @@
 import { Trans } from "@lingui/macro";
 import { useState } from "preact/hooks";
-import {
-    Controller,
-    FormProvider,
-    useForm,
-    useFormContext,
-} from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
 import {
     FullScreenModal,
     IFullScreenModalProps,
 } from "components/Modal/FullScreenModal";
 
-import {
-    AddNewConfigSection,
-    ConfigSection,
-} from "plugins/lime-plugin-mesh-wide-config/src/components/ConfigSection";
+import { AddNewConfigSection } from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
+import { FormSection } from "plugins/lime-plugin-mesh-wide-config/src/components/FormSection";
 import { MeshStatus } from "plugins/lime-plugin-mesh-wide-config/src/components/MeshStatus";
 import { useMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { IMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
@@ -58,7 +51,7 @@ const EditConfigForm = ({
                     <div className={"flex flex-col gap-3"}>
                         {Object.entries(formData).map(
                             ([title, dropdown], index) => (
-                                <ConfigSection
+                                <FormSection
                                     key={index}
                                     title={title}
                                     dropdown={dropdown}
