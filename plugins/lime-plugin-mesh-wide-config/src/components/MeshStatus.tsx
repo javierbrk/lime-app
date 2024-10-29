@@ -7,6 +7,7 @@ export const MeshStatus = () => {
     const { showToast } = useToast();
     return (
         <FooterStatus
+            fixed={false}
             status={"success"}
             btn={"Update"}
             onClick={() => {

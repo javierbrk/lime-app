@@ -45,25 +45,26 @@ const EditConfigForm = ({
     };
 
     return (
-        <div className={"flex flex-col h-full w-full max-h-full"}>
-            <FormProvider {...fMethods}>
-                <form onSubmit={fMethods.handleSubmit(onSubmit)}>
-                    <div className={"flex flex-col gap-3"}>
-                        {Object.entries(formData).map(
-                            ([title, dropdown], index) => (
-                                <FormSection
-                                    key={index}
-                                    title={title}
-                                    dropdown={dropdown}
-                                />
-                            )
-                        )}
-                        <AddNewConfigSection />
-                    </div>
-                    <MeshStatus />
-                </form>
-            </FormProvider>
-        </div>
+        <FormProvider {...fMethods}>
+            <form
+                className="flex flex-col w-full h-full max-h-full grow justify-between mb-0"
+                onSubmit={fMethods.handleSubmit(onSubmit)}
+            >
+                <div className="flex flex-col grow overflow-y-auto max-h-full gap-3 px-2 mb-4">
+                    {Object.entries(formData).map(
+                        ([title, dropdown], index) => (
+                            <FormSection
+                                key={index}
+                                title={title}
+                                dropdown={dropdown}
+                            />
+                        )
+                    )}
+                    <AddNewConfigSection />
+                </div>
+                <MeshStatus />
+            </form>
+        </FormProvider>
     );
 };
 
