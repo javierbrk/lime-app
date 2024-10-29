@@ -1,6 +1,6 @@
 import { Trans, t } from "@lingui/macro";
 import { Label } from "@tanstack/react-query-devtools/build/lib/Explorer";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
 import { Modal, ModalProps } from "components/Modal/Modal";
 import InputField from "components/inputs/InputField";
@@ -12,7 +12,7 @@ export const DeletePropModal = ({
     prop,
     ...rest
 }: { prop: string } & Pick<ModalProps, "onDelete" | "isOpen" | "onClose">) => (
-    <Modal title={<Trans>Delete property</Trans>} {...rest}>
+    <Modal title={<Trans>Delete property</Trans>} cancelBtn {...rest}>
         <div>
             <Trans>
                 Are you sure you want to delete the <strong>{prop}</strong>{" "}
@@ -57,7 +57,7 @@ export const AddNewSectionModal = ({
     sectionName?: string;
 } & Pick<ModalProps, "isOpen" | "onClose">) => {
     const fmethods = useForm<AddNewSectionFormProps>({
-        defaultValues: { name: "", value: "", values: [""], isList: false },
+        defaultValues: { name: "", value: "", values: [], isList: false },
     });
 
     const handleSuccess = (data: AddNewSectionFormProps) => {
@@ -71,6 +71,7 @@ export const AddNewSectionModal = ({
         formState: { errors },
         watch,
         reset,
+        control,
     } = fmethods;
 
     let title = <Trans>Add new section</Trans>;
@@ -81,45 +82,56 @@ export const AddNewSectionModal = ({
     const isList = watch("isList");
 
     return (
-        <Modal
-            title={title}
-            successBtnText={<Trans>Add</Trans>}
-            {...rest}
-            onSuccess={handleSubmit(handleSuccess)}
-        >
-            <FormProvider {...fmethods}>
-                <InputField
-                    id={"name"}
-                    label={<Trans>Name</Trans>}
-                    {...register("name", {
-                        required: t`This field cannot be empty`,
-                        minLength: {
-                            value: 1,
-                            message: t`Minimum length is 1`,
-                        },
-                    })}
-                    error={errors.name?.message}
-                />
-                {sectionName && (
-                    <>
-                        <div className={switchStyle.toggles}>
-                            <input
-                                type="checkbox"
-                                id="enabled"
-                                {...register("isList")}
+        <FormProvider {...fmethods}>
+            <form>
+                <Modal
+                    title={title}
+                    successBtnText={<Trans>Add</Trans>}
+                    cancelBtn
+                    {...rest}
+                    onSuccess={handleSubmit(handleSuccess)}
+                >
+                    <Controller
+                        name={"name"}
+                        control={control}
+                        rules={{
+                            minLength: {
+                                value: 1,
+                                message: t`Minimum length is 1`,
+                            },
+                            required: t`This field cannot be empty`,
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                            <InputField
+                                id={"name"}
+                                label={<Trans>Value</Trans>}
+                                className="w-100"
+                                error={error?.message}
+                                {...field}
                             />
-                            <label htmlFor="enabled">
-                                <Trans>Is a list</Trans>
-                            </label>
-                        </div>
-                        <Label>Value</Label>
-                        <EditableField
-                            name={isList ? "values" : "value"}
-                            isList={isList}
-                        />
-                    </>
-                )}
-            </FormProvider>
-        </Modal>
+                        )}
+                    />
+                    {sectionName && (
+                        <>
+                            <div className={switchStyle.toggles}>
+                                <input
+                                    type="checkbox"
+                                    id="enabled"
+                                    {...register("isList")}
+                                />
+                                <label htmlFor="enabled">
+                                    <Trans>Is a list</Trans>
+                                </label>
+                            </div>
+                            <Label>Value</Label>
+                            <EditableField
+                                name={isList ? "values" : "value"}
+                                isList={isList}
+                            />
+                        </>
+                    )}
+                </Modal>
+            </form>
+        </FormProvider>
     );
 };

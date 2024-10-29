@@ -6,14 +6,9 @@ import { Collapsible } from "components/collapsible";
 import { useToast } from "components/toast/toastProvider";
 
 import { EditOrDelete } from "plugins/lime-plugin-mesh-wide-config/src/components/Components";
-import {
-    AddElementButton,
-    AddNewConfigSection,
-} from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
+import { AddNewConfigSection } from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
 import { OptionContainer } from "plugins/lime-plugin-mesh-wide-config/src/components/FormOption";
 import {
-    AddNewSectionFormProps,
-    AddNewSectionModal,
     DeletePropModal,
     EditPropModal,
 } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
@@ -46,34 +41,18 @@ export const FormSection = ({
 
 export const SectionEditOrDelete = ({ name }) => {
     const {
-        open: isEditOpen,
-        onOpen: openEdit,
-        onClose: onCloseEdit,
-    } = useDisclosure();
-    const {
         open: isDeleteModalOpen,
         onOpen: openDeleteModal,
         onClose: onCloseDeleteModal,
     } = useDisclosure();
     const { showToast } = useToast();
-
-    const onEdit = async () => {
-        console.log("edit stuff");
-        onCloseEdit();
-        showToast({
-            text: (
-                <Trans>
-                    Edited {name} - {new Date().toDateString()}
-                </Trans>
-            ),
-            onAction: () => {
-                console.log("Undo action");
-            },
-        });
-    };
+    const { watch, setValue, reset } = useFormContext();
 
     const onDelete = async () => {
-        console.log("delete stuff");
+        const form = watch();
+        const newForm = { ...form };
+        delete newForm[name];
+        reset(newForm);
         onCloseDeleteModal();
         showToast({
             text: (
@@ -82,20 +61,14 @@ export const SectionEditOrDelete = ({ name }) => {
                 </Trans>
             ),
             onAction: () => {
-                console.log("Undo action");
+                reset(form);
             },
         });
     };
 
     return (
         <>
-            <EditOrDelete onEdit={openEdit} onDelete={openDeleteModal} />
-            <EditPropModal
-                prop={name}
-                isOpen={isEditOpen}
-                onSuccess={onEdit}
-                onClose={onCloseEdit}
-            />
+            <EditOrDelete onDelete={openDeleteModal} />
             <DeletePropModal
                 prop={name}
                 isOpen={isDeleteModalOpen}
