@@ -2,24 +2,24 @@ import { Trans } from "@lingui/macro";
 import { useFormContext } from "react-hook-form";
 
 import { useDisclosure } from "components/Modal/useDisclosure";
-import { Button, ButtonProps } from "components/buttons/button";
 import { Collapsible } from "components/collapsible";
 import { useToast } from "components/toast/toastProvider";
 
 import { EditOrDelete } from "plugins/lime-plugin-mesh-wide-config/src/components/Components";
-import { OptionContainer } from "plugins/lime-plugin-mesh-wide-config/src/components/OptionForm";
+import {
+    AddElementButton,
+    AddNewConfigSection,
+} from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
+import { OptionContainer } from "plugins/lime-plugin-mesh-wide-config/src/components/FormOption";
 import {
     AddNewSectionFormProps,
     AddNewSectionModal,
     DeletePropModal,
     EditPropModal,
 } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
-import {
-    IMeshWideConfig,
-    IMeshWideSection,
-} from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
+import { IMeshWideSection } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 
-export const ConfigSection = ({
+export const FormSection = ({
     title,
     dropdown,
 }: {
@@ -103,56 +103,5 @@ export const SectionEditOrDelete = ({ name }) => {
                 onClose={onCloseDeleteModal}
             />
         </>
-    );
-};
-
-export const AddNewConfigSection = ({
-    sectionName,
-}: {
-    sectionName?: string;
-}) => {
-    const { open, onOpen, onClose } = useDisclosure();
-    const { showToast } = useToast();
-
-    const { watch, setValue } = useFormContext<IMeshWideConfig>();
-    const section = watch(sectionName);
-
-    const onSuccess = (data: AddNewSectionFormProps) => {
-        if (!sectionName) {
-            setValue(data.name, {});
-        } else {
-            let value: string | string[] = data.value;
-            if (data.isList) {
-                value = data.values;
-            }
-            setValue(sectionName, {
-                ...section,
-                [data.name]: value,
-            });
-        }
-        onClose();
-        showToast({
-            text: <Trans>Added section {data.name}</Trans>,
-        });
-    };
-
-    return (
-        <>
-            <AddElementButton onClick={onOpen} />
-            <AddNewSectionModal
-                sectionName={sectionName}
-                isOpen={open}
-                onSuccess={onSuccess}
-                onClose={onClose}
-            />
-        </>
-    );
-};
-
-export const AddElementButton = (props: ButtonProps) => {
-    return (
-        <Button color={"info"} {...props}>
-            <Trans>Add new section</Trans>
-        </Button>
     );
 };
