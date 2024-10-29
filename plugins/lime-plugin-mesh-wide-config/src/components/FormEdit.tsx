@@ -1,5 +1,5 @@
 import { Trans, t } from "@lingui/macro";
-import { StateUpdater, useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { Controller, useFormContext } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
@@ -18,30 +18,37 @@ import { IMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshCo
 export const EditableField = ({
     isList,
     name,
-    setIsEditing,
 }: {
     isList: boolean;
     name: string;
-    setIsEditing?: StateUpdater<boolean>;
 }) => {
     const { control, setValue, watch, getValues } = useFormContext();
 
     const value = watch(name);
-    const [initialState] = useState(value);
     // Hack to force re-render when the list changes
     const [uniqueKeys, setUniqueKeys] = useState(
-        isList ? value.map(() => uuidv4()) : ""
+        isList && value?.length ? value.map(() => uuidv4()) : []
     );
+
+    const syncKeysWithValues = () => {
+        // Ensure uniqueKeys matches the length of value array
+        setUniqueKeys((keys) => [
+            ...keys,
+            ...Array(value.length - keys.length)
+                .fill(null)
+                .map(() => uuidv4()),
+        ]);
+    };
 
     const removeListItem = (index) => {
         const updatedValues = value.filter((_, i) => i !== index);
-        setValue(name, updatedValues); // Update form values
-        setUniqueKeys((keys) => keys.filter((_, i) => i !== index)); // Update keys to match the new array
+        setValue(name, updatedValues);
+        setUniqueKeys((keys) => keys.filter((_, i) => i !== index));
     };
 
     const addListItem = () => {
-        setValue(name, [...value, ""]); // Update form values
-        setUniqueKeys((keys) => [...keys, uuidv4()]); // Add a new unique key
+        setValue(name, [...value, ""]);
+        setUniqueKeys((keys) => [...keys, uuidv4()]);
     };
 
     // Ensure the list has at least one item at the start
@@ -49,6 +56,8 @@ export const EditableField = ({
         if (isList && value.length === 0) {
             setValue(name, [""]);
             setUniqueKeys([uuidv4()]); // Reset keys for new list
+        } else {
+            syncKeysWithValues(); // Sync keys with values length on every render
         }
     }, [isList, value, name, setValue]);
 
@@ -67,10 +76,7 @@ export const EditableField = ({
                             },
                             required: t`This field cannot be empty`,
                         }}
-                        render={({
-                            field: { value, ...rest },
-                            fieldState: { error },
-                        }) => {
+                        render={({ field, fieldState: { error } }) => {
                             return (
                                 <div
                                     className={
@@ -80,9 +86,8 @@ export const EditableField = ({
                                     <InputField
                                         id={`${name}[${index}]`}
                                         className="w-100"
-                                        value={value}
                                         error={error?.message}
-                                        {...rest}
+                                        {...field}
                                     />
                                     <EditOrDelete
                                         onDelete={() => removeListItem(index)}
@@ -126,10 +131,11 @@ export const AddNewConfigSection = ({
 }: {
     sectionName?: string;
 }) => {
+    const { watch, setValue } = useFormContext<IMeshWideConfig>();
+
     const { open, onOpen, onClose } = useDisclosure();
     const { showToast } = useToast();
 
-    const { watch, setValue } = useFormContext<IMeshWideConfig>();
     const section = watch(sectionName);
 
     const onSuccess = (data: AddNewSectionFormProps) => {
@@ -166,8 +172,13 @@ export const AddNewConfigSection = ({
 
 export const AddElementButton = (props: ButtonProps) => {
     return (
-        <Button color={"info"} {...props}>
-            <Trans>Add new section</Trans>
-        </Button>
+        <div className="flex justify-center">
+            <Button
+                {...props}
+                className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-400 text-gray-400 hover:bg-gray-100 font-bold cursor-pointer"
+            >
+                +
+            </Button>
+        </div>
     );
 };

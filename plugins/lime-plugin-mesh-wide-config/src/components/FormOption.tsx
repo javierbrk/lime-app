@@ -82,12 +82,8 @@ export const OptionContainer = ({
                 {!isEditing && <div>{_value}</div>}
                 {isEditing && (
                     <FormProvider {...fmethods}>
-                        <form>
-                            <EditableField
-                                isList={isList}
-                                name={name}
-                                setIsEditing={setIsEditing}
-                            />
+                        <form className={"flex flex-col gap-4"}>
+                            <EditableField isList={isList} name={name} />
                             <div className={"flex flex-row gap-4"}>
                                 <Button
                                     onClick={(e) => {

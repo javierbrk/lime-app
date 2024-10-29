@@ -6,7 +6,6 @@ const InputField = <TFieldValues extends FieldValues>({
     id,
     label,
     error,
-    value,
     ...inputProps
 }: {
     id: Path<TFieldValues>;
@@ -25,7 +24,6 @@ const InputField = <TFieldValues extends FieldValues>({
                 id={id}
                 data-testid="password-input"
                 className="w-100"
-                value={value}
                 {...inputProps}
             />
             {error && <p class="text-red-500 text-md mt-1">{error}</p>}

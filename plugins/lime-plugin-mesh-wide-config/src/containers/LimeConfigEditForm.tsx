@@ -40,6 +40,8 @@ const EditConfigForm = ({
 
     const formData = fMethods.watch();
 
+    console.log("formData", formData);
+
     const onSubmit = (data) => {
         console.log("Form Data:", data);
     };
