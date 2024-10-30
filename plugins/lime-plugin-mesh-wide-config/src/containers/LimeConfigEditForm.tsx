@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { useState } from "preact/hooks";
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "preact/hooks";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 
 import {
     FullScreenModal,
@@ -8,8 +8,8 @@ import {
 } from "components/Modal/FullScreenModal";
 
 import { AddNewConfigSection } from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
+import { FormFooter } from "plugins/lime-plugin-mesh-wide-config/src/components/FormFooter";
 import { FormSection } from "plugins/lime-plugin-mesh-wide-config/src/components/FormSection";
-import { MeshStatus } from "plugins/lime-plugin-mesh-wide-config/src/components/MeshStatus";
 import { useMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { IMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 
@@ -34,13 +34,21 @@ const EditConfigForm = ({
 }: {
     meshWideConfig: IMeshWideConfig;
 }) => {
+    const [isDirty, setIsDirty] = useState(false);
     const fMethods = useForm<IMeshWideConfig>({
         defaultValues: meshWideConfig,
     });
+    const defaultValuesRef = useRef(meshWideConfig);
 
     const formData = fMethods.watch();
 
-    console.log("formData", formData);
+    // compare values on each change
+    useEffect(() => {
+        setIsDirty(
+            JSON.stringify(formData) !==
+                JSON.stringify(defaultValuesRef.current)
+        );
+    }, [formData]);
 
     const onSubmit = (data) => {
         console.log("Form Data:", data);
@@ -64,7 +72,7 @@ const EditConfigForm = ({
                     )}
                     <AddNewConfigSection />
                 </div>
-                <MeshStatus />
+                <FormFooter isDirty={isDirty} />
             </form>
         </FormProvider>
     );
