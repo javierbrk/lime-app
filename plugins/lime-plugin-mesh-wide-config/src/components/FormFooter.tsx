@@ -1,12 +1,18 @@
 import { Trans } from "@lingui/macro";
-import { useRef, useState } from "preact/hooks";
 import { useFormContext } from "react-hook-form";
 
 import { FooterStatus } from "components/status/footer";
-import { useToast } from "components/toast/toastProvider";
+
+import { IMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
+import { jsonToConfig } from "plugins/lime-plugin-mesh-wide-config/src/utils/jsonParser";
 
 export const FormFooter = ({ isDirty }: { isDirty: boolean }) => {
-    const { showToast } = useToast();
+    const { handleSubmit } = useFormContext<IMeshWideConfig>();
+
+    const onSubmit = (data: IMeshWideConfig) => {
+        console.log("Form", data);
+        console.log(jsonToConfig(data));
+    };
 
     let message = <Trans>No changes made</Trans>;
     if (isDirty) {
@@ -29,16 +35,7 @@ export const FormFooter = ({ isDirty }: { isDirty: boolean }) => {
                 disabled: !isDirty,
             }}
             onClick={() => {
-                showToast({
-                    text: (
-                        <>
-                            <Trans>
-                                Updating shared state{" "}
-                                {new Date().toDateString()}
-                            </Trans>
-                        </>
-                    ),
-                });
+                handleSubmit(onSubmit)();
             }}
         >
             <div className={"flex flex-col "}>{message}</div>

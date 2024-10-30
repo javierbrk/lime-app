@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import {
     FullScreenModal,
@@ -50,16 +50,9 @@ const EditConfigForm = ({
         );
     }, [formData]);
 
-    const onSubmit = (data) => {
-        console.log("Form Data:", data);
-    };
-
     return (
         <FormProvider {...fMethods}>
-            <form
-                className="flex flex-col w-full h-full max-h-full grow justify-between mb-0"
-                onSubmit={fMethods.handleSubmit(onSubmit)}
-            >
+            <form className="flex flex-col w-full h-full max-h-full grow justify-between mb-0">
                 <div className="flex flex-col grow overflow-y-auto max-h-full gap-3 px-2 mb-4">
                     {Object.entries(formData).map(
                         ([title, dropdown], index) => (

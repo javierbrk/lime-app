@@ -56,8 +56,9 @@ export const EditableField = ({
         if (isList && value.length === 0) {
             setValue(name, [""]);
             setUniqueKeys([uuidv4()]); // Reset keys for new list
-        } else {
-            syncKeysWithValues(); // Sync keys with values length on every render
+        } else if (isList) {
+            // Sync keys with values length on every render
+            syncKeysWithValues();
         }
     }, [isList, value, name, setValue]);
 
