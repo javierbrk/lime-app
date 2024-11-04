@@ -7,10 +7,8 @@ import NodeInfoListItem, {
 import { NodesListWrapper } from "components/mesh-wide-wizard/NodesListWrapper";
 
 import { useMeshWideConfigState } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
-import {
-    MeshWideNodeConfigInfo,
-    meshConfigStateKey,
-} from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
+import { meshConfigStateKey } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueriesKeys";
+import { MeshWideNodeConfigInfo } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 import {
     InfoStatusMessageMap,
     mainNodeStatusMessageMap,
