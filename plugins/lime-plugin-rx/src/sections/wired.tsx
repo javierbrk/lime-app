@@ -1,4 +1,8 @@
 import { Trans } from "@lingui/macro";
+import { useEffect, useState } from "preact/hooks";
+
+import Modal, { ModalProps } from "components/Modal/Modal";
+import { useDisclosure } from "components/Modal/useDisclosure";
 
 import {
     IconsClassName,
@@ -128,78 +132,117 @@ const tplink = [
     },
 ];
 
-type PortsByRoleAndDevice = {
-    [port: string]: { [device: string]: SwitchStatus[] };
+type PortsByDevice = {
+    [device: string]: SwitchStatus[];
 };
 
-const Ports = ({ switches }: { switches: SwitchStatus[] }) => {
-    const portsByRoleAndDevice: PortsByRoleAndDevice = switches.reduce(
-        (acc, obj) => {
-            const { role, device } = obj;
+enum SupportedPortRoles {
+    WAN = "wan",
+    LAN = "lan",
+    MESH = "mesh",
+}
 
-            if (!acc[role]) {
-                acc[role] = {};
-            }
-            if (!acc[role][device]) {
-                acc[role][device] = [];
-            }
-            acc[role][device].push(obj);
-
-            return acc;
-        },
-        {}
+const ChangeRoleConfirmationModal = ({
+    newRole,
+    ...rest
+}: { newRole: string } & ModalProps) => {
+    return (
+        <Modal {...rest} title={<Trans>Changing role to {newRole}</Trans>}>
+            <div className={"flex flex-col gap-4"}>
+                <p>
+                    <Trans>
+                        Changing the role of a port may cause network
+                        interruptions. Are you sure you want to continue?
+                    </Trans>
+                </p>
+            </div>
+        </Modal>
     );
+};
 
+const PortRoleSelector = ({ port }: { port: SwitchStatus }) => {
+    const [newRole, setNewRole] = useState("");
+    const { open, onOpen, onClose } = useDisclosure({
+        onClose() {
+            setNewRole("");
+        },
+    });
+
+    const changeRole = async () => {
+        // await two seconds and then resolve
+        return new Promise((resolve) => setTimeout(resolve, 2000));
+    };
+
+    useEffect(() => {
+        if (newRole) {
+            onOpen();
+        }
+    }, [newRole]);
+
+    const role = port.role.toLowerCase();
+    if (role === "cpu") {
+        return null;
+    }
+    let link = "fill-disabled";
+    if (port.link?.toLowerCase() === "up") link = "fill-primary-dark";
+    return (
+        <div className={"flex flex-col justify-center items-center gap-2"}>
+            <PortsIcon className={`h-12 w-12 ${link}`} />
+            <select
+                className={"pl-2 text-center"}
+                value={role}
+                onChange={(e) => {
+                    setNewRole((e.target as HTMLSelectElement).value);
+                }}
+            >
+                <option value={role}>{role}</option>
+                {Object.values(SupportedPortRoles)
+                    .filter((supportedRoles) => supportedRoles !== role)
+                    .map((filteredRole) => (
+                        <option key={filteredRole} value={filteredRole}>
+                            {filteredRole}
+                        </option>
+                    ))}
+            </select>
+            <ChangeRoleConfirmationModal
+                newRole={newRole}
+                onClose={onClose}
+                isOpen={open}
+                cancelBtn
+                onSuccess={changeRole}
+            />
+        </div>
+    );
+};
+
+const Ports = ({ switches: s }: { switches: SwitchStatus[] }) => {
+    const switches = tplink;
+    const ports: PortsByDevice = switches.reduce((acc, obj) => {
+        const { device } = obj;
+        if (!acc[device]) {
+            acc[device] = [];
+        }
+        acc[device].push(obj);
+        return acc;
+    }, {});
     return (
         <div
             className={"flex flex-wrap px-10 gap-4 justify-between"}
             data-testid="ports-container"
         >
-            {Object.entries(portsByRoleAndDevice).map(([role, devices]) => {
-                if (role.toLowerCase() === "cpu") return null;
+            {Object.entries(ports).map(([device, ports], k) => {
                 return (
-                    <div key={role} className={"flex flex-col h-fit"}>
-                        {/*Print role name*/}
-                        <h2 className={"font-bold"}>{role.toUpperCase()}</h2>
-                        <div className={"flex flex-row gap-5 "}>
-                            {Object.entries(devices).map(
-                                ([device, ports], k) => (
-                                    // Print device name
-                                    <div
-                                        key={`${device}${k}`}
-                                        className={
-                                            "flex flex-col justify-start items-start"
-                                        }
-                                    >
-                                        <h2>{device.toLowerCase()}</h2>
-                                        <div
-                                            key={`${device}${k}`}
-                                            className={
-                                                "flex flex-row justify-center items-center gap-2"
-                                            }
-                                        >
-                                            {/*Print port group*/}
-                                            {ports.map((port) => {
-                                                let link = "fill-disabled";
-                                                if (
-                                                    port.link?.toLowerCase() ===
-                                                    "up"
-                                                )
-                                                    link = "fill-primary-dark";
-                                                return (
-                                                    <div
-                                                        key={`${role}-${port.num}`}
-                                                    >
-                                                        <PortsIcon
-                                                            className={`h-7 w-7 ${link}`}
-                                                        />
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                )
-                            )}
+                    <div key={device} className={"flex flex-col h-fit gap-4"}>
+                        <h2 className={"font-bold"}>{device.toUpperCase()}</h2>
+                        <div
+                            key={`${device}${k}`}
+                            className={
+                                "flex flex-row justify-center items-center gap-6"
+                            }
+                        >
+                            {ports.map((port, k) => (
+                                <PortRoleSelector port={port} key={k} />
+                            ))}
                         </div>
                     </div>
                 );
