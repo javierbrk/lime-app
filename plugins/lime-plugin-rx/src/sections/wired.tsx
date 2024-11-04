@@ -10,8 +10,16 @@ import {
     SectionTitle,
 } from "plugins/lime-plugin-rx/src/components/components";
 import { PortsIcon } from "plugins/lime-plugin-rx/src/icons/portsIcon";
-import { useNodeStatus } from "plugins/lime-plugin-rx/src/rxQueries";
-import { SwitchStatus } from "plugins/lime-plugin-rx/src/rxTypes";
+import {
+    useNodeStatus,
+    useSetPortRole,
+} from "plugins/lime-plugin-rx/src/rxQueries";
+import {
+    SupportedPortRoles,
+    SwitchStatus,
+} from "plugins/lime-plugin-rx/src/rxTypes";
+
+import queryCache from "utils/queryCache";
 
 const liro1 = [
     {
@@ -136,12 +144,6 @@ type PortsByDevice = {
     [device: string]: SwitchStatus[];
 };
 
-enum SupportedPortRoles {
-    WAN = "wan",
-    LAN = "lan",
-    MESH = "mesh",
-}
-
 const ChangeRoleConfirmationModal = ({
     newRole,
     ...rest
@@ -161,16 +163,23 @@ const ChangeRoleConfirmationModal = ({
 };
 
 const PortRoleSelector = ({ port }: { port: SwitchStatus }) => {
-    const [newRole, setNewRole] = useState("");
+    const { mutateAsync } = useSetPortRole({
+        onSettled: () => {
+            queryCache.invalidateQueries({
+                queryKey: ["lime-rx", "node-status"],
+            });
+        },
+    });
+    const [newRole, setNewRole] = useState<SupportedPortRoles>();
     const { open, onOpen, onClose } = useDisclosure({
         onClose() {
-            setNewRole("");
+            setNewRole(null);
         },
     });
 
     const changeRole = async () => {
-        // await two seconds and then resolve
-        return new Promise((resolve) => setTimeout(resolve, 2000));
+        await mutateAsync({ ...port, role: newRole });
+        onClose();
     };
 
     useEffect(() => {
@@ -192,7 +201,10 @@ const PortRoleSelector = ({ port }: { port: SwitchStatus }) => {
                 className={"pl-2 text-center"}
                 value={role}
                 onChange={(e) => {
-                    setNewRole((e.target as HTMLSelectElement).value);
+                    setNewRole(
+                        (e.target as HTMLSelectElement)
+                            .value as SupportedPortRoles
+                    );
                 }}
             >
                 <option value={role}>{role}</option>
