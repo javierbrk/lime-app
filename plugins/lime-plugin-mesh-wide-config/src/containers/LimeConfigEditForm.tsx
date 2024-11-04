@@ -10,11 +10,11 @@ import {
 import { AddNewConfigSection } from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
 import { FormFooter } from "plugins/lime-plugin-mesh-wide-config/src/components/FormFooter";
 import { FormSection } from "plugins/lime-plugin-mesh-wide-config/src/components/FormSection";
-import { useMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
+import { useCommunityConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { IMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 
 const LimeConfigEditForm = (props: Partial<IFullScreenModalProps>) => {
-    const { data: meshWideConfig, isLoading } = useMeshWideConfig({});
+    const { data: meshWideConfig, isLoading } = useCommunityConfig({});
 
     return (
         <FullScreenModal
