@@ -1,5 +1,3 @@
-import { MeshConfigTypes } from "components/shared-state/SharedStateTypes";
-
 export type ConfigItemType = string | string[];
 
 export interface IMeshWideSection {
@@ -8,6 +6,10 @@ export interface IMeshWideSection {
 
 export type IMeshWideConfig = {
     [section: string]: IMeshWideSection;
+};
+
+export type GetCommunityConfigResponse = {
+    file_contents: string;
 };
 
 export type MainNodeStatusType = "NO" | "MAIN_NODE";
