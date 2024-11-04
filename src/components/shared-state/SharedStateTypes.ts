@@ -8,7 +8,7 @@ import {
 } from "plugins/lime-plugin-mesh-wide/src/meshWideTypes";
 
 export type MeshConfigTypes = {
-    mesh_wide_config: MeshWideConfigState;
+    mesh_config: MeshWideConfigState;
 };
 
 export type MeshUpgradeTypes = {

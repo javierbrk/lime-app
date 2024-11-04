@@ -38,8 +38,6 @@ export interface MeshWideConfigState {
     [key: string]: MeshWideNodeConfigInfo;
 }
 
-export const meshConfigStateKey: keyof MeshConfigTypes = "mesh_wide_config";
-
 export type StepperState =
     | "INITIAL" // No transaction
     | "TRANSACTION_STARTED" // Transaction initiated and sharing new configuration
