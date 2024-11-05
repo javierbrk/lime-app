@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import React from "react";
 
+import { Button } from "components/buttons/button";
 import WizardWrapper from "components/mesh-wide-wizard/WizardWrapper";
 
 import LimeConfigEditForm from "plugins/lime-plugin-mesh-wide-config/src/containers/LimeConfigEditForm";
@@ -13,8 +14,12 @@ const MeshConfigPage = () => {
     if (showEditConfig) {
         return <LimeConfigEditForm onClose={() => setShowEditConfig(false)} />;
     }
+    const Buttonx = () => {
+        return (
+            <Button onClick={() => setShowEditConfig(true)}>Show modal</Button>
+        );
+    };
 
-    // return <Button onClick={() => setShowEditConfig(true)}>Show modal</Button>;
     return (
         <WizardWrapper
             // error={error}
@@ -23,6 +28,7 @@ const MeshConfigPage = () => {
             // banner={BannerNotification}
             statusPage={StatusPage}
             nodesList={NodesListPage}
+            footer={Buttonx}
             // footer={NextStepFooter}
         />
     );
