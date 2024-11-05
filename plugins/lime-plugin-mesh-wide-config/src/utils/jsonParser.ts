@@ -25,7 +25,8 @@ export const jsonToConfig = (json: IMeshWideConfig): string => {
 };
 
 export const parseConfigFile = (data: string): IMeshWideConfig => {
-    const lines = data.split("\n");
+    // Replace escaped newlines with actual newlines
+    const lines = data.replace(/\\n/g, "\n").split("\n");
     const config: IMeshWideConfig = {};
     let configTitle = "";
     let sectionName = "";
@@ -65,6 +66,5 @@ export const parseConfigFile = (data: string): IMeshWideConfig => {
             }
         }
     });
-
     return config;
 };

@@ -1,9 +1,8 @@
 import { QueryKey, UseQueryOptions, useQuery } from "@tanstack/react-query";
 
-import {
-    getCommunityConfig,
-    getMeshWideConfig,
-} from "plugins/lime-plugin-mesh-wide-config/src/meshConfigApi";
+import { doSharedStateApiCall } from "components/shared-state/SharedStateApi";
+
+import { getCommunityConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigApi";
 import { meshConfigQueryKeys } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueriesKeys";
 import {
     GetCommunityConfigResponse,
@@ -31,7 +30,10 @@ export function useMeshWideConfigState(
 ) {
     return useQuery<MeshWideConfigState>({
         queryKey: meshConfigQueryKeys.getMeshWideConfigInfo() as QueryKey,
-        queryFn: getMeshWideConfig,
+        queryFn: () =>
+            doSharedStateApiCall<"mesh_config">(
+                meshConfigQueryKeys.getMeshWideConfigInfo()
+            ),
         ...params,
     });
 }

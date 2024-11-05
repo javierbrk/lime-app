@@ -13,6 +13,8 @@ import { FormSection } from "plugins/lime-plugin-mesh-wide-config/src/components
 import { useCommunityConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { IMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 
+import { isEmpty } from "utils/utils";
+
 const LimeConfigEditForm = (props: Partial<IFullScreenModalProps>) => {
     const { data: meshWideConfig, isLoading } = useCommunityConfig({});
 
@@ -63,6 +65,13 @@ const EditConfigForm = ({
                             />
                         )
                     )}
+                    {!formData ||
+                        (isEmpty(formData) && (
+                            <Trans>
+                                Your Lime Community file seems empty! Please add
+                                some configurations.
+                            </Trans>
+                        ))}
                     <AddNewConfigSection />
                 </div>
                 <FormFooter isDirty={isDirty} />
