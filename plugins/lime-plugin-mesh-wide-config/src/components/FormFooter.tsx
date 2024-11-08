@@ -22,10 +22,10 @@ export const FormFooter = ({
             });
         },
         onSuccess: () => {
+            onClose();
             showToast({
                 text: <Trans>Starting mesh wide configuration change</Trans>,
             });
-            onClose();
         },
     });
     const onSubmit = (data: IMeshWideConfig) => {

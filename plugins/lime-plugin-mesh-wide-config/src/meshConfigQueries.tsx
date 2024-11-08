@@ -73,11 +73,10 @@ export const useSetCommunityConfig = (
         SetCommunityConfigParams
     >({
         mutationKey: MeshConfigQueryKeys.setCommunityConfig,
-        mutationFn: (args) => {
-            return standarizedApiCall<MeshWideRPCReturnTypes>({
-                args: [...MeshConfigQueryKeys.setCommunityConfig, {}],
-            });
-        },
+        mutationFn: (args) =>
+            standarizedApiCall<MeshWideRPCReturnTypes>({
+                args: [...MeshConfigQueryKeys.setCommunityConfig, args],
+            }),
         ...params,
     });
 };
