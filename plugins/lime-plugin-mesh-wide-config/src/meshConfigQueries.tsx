@@ -5,7 +5,10 @@ import {
     useQuery,
 } from "@tanstack/react-query";
 
-import { doSharedStateApiCall } from "components/shared-state/SharedStateApi";
+import {
+    callToRemoteNode,
+    doSharedStateApiCall,
+} from "components/shared-state/SharedStateApi";
 import { sharedStateQueries } from "components/shared-state/SharedStateQueriesKeys";
 
 import {
@@ -20,7 +23,9 @@ import {
 } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 import { parseConfigFile } from "plugins/lime-plugin-mesh-wide-config/src/utils/jsonParser";
 import { MeshWideRPCReturnTypes } from "plugins/lime-plugin-mesh-wide-upgrade/src/meshUpgradeTypes";
+import { getNodeIpsByConfigCondition } from "plugins/lime-plugin-mesh-wide-upgrade/src/utils/api";
 
+import { useMeshWideSyncCall } from "utils/meshWideSyncCall";
 import {
     ApiServiceParamsType,
     StandarizedApiError,
@@ -96,5 +101,34 @@ export const useConfigNodeState = (
                 args: MeshConfigQueryKeys.getNodeStatus,
             }),
         ...params,
+    });
+};
+
+export const useParallelAbort = (opts?) => {
+    // State to store the errors
+    const { data: nodes } = useMeshWideConfigState();
+    const ips = getNodeIpsByConfigCondition(nodes, (node) =>
+        [
+            "UPGRADE_SCHEDULED",
+            "CONFIRMATION_PENDING",
+            "ERROR",
+            "READY_FOR_APPLY",
+            "RESTART_SCHEDULED",
+        ].includes(node.transaction_state)
+    );
+    return useMeshWideSyncCall({
+        mutationKey: MeshConfigQueryKeys.remoteAbort,
+        // mutationFn: remoteAbort,
+        mutationFn: ({ ip }) =>
+            callToRemoteNode({
+                ip,
+                apiCall: (customApi) =>
+                    standarizedApiCall({
+                        apiService: customApi,
+                        args: MeshConfigQueryKeys.remoteAbort,
+                    }),
+            }),
+        ips,
+        options: opts,
     });
 };

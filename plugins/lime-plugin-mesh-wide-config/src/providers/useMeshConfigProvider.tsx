@@ -1,15 +1,38 @@
 import { ComponentChildren, createContext } from "preact";
 import { useState } from "preact/hooks";
-import { useContext } from "react";
+import { useCallback, useContext, useMemo } from "react";
 
 import {
     useConfigNodeState,
     useMeshWideConfigState,
+    useParallelAbort,
 } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
+import { MeshConfigQueryKeys } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueriesKeys";
+import {
+    NodeMeshConfigInfo,
+    StepperWizardState,
+} from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
+
+import queryCache from "utils/queryCache";
 
 const NODE_STATUS_REFETCH_INTERVAL = 5000;
 
+const getWizardState = (
+    nodeInfo: NodeMeshConfigInfo | undefined,
+    isAborting: boolean
+): StepperWizardState => {
+    if (isAborting) return "ABORTING";
+    return nodeInfo?.transaction_state ?? "DEFAULT";
+};
+
 export const useMeshConfigProvider = () => {
+    // UseCallback to invalidate queries
+    const invalidateQueries = useCallback(() => {
+        return queryCache.invalidateQueries({
+            queryKey: MeshConfigQueryKeys.getNodeStatus,
+        });
+    }, []);
+
     const {
         data: meshInfo,
         isLoading: meshInfoLoading,
@@ -22,9 +45,49 @@ export const useMeshConfigProvider = () => {
         refetchInterval: NODE_STATUS_REFETCH_INTERVAL,
     });
 
+    // Inner state to control is aborting callback awaiting until query invalidation
+    const [isAborting, setIsAborting] = useState(false);
+    const { callMutations: abortMutation } = useParallelAbort();
+
+    const allNodesReadyForApply = useMemo(() => {
+        return Object.values(meshInfo || {}).every(
+            (node) => node.transaction_state === "READY_FOR_APPLY"
+        );
+    }, [meshInfo]);
+
+    const allNodesConfirmed = useMemo(() => {
+        return Object.values(meshInfo || {}).every(
+            (node) => node.transaction_state === "CONFIRMED"
+        );
+    }, [meshInfo]);
+
     const isLoading = meshInfoLoading || nodeInfoLoading;
 
-    return { nodeInfo, meshInfo, isLoading };
+    const abort = useCallback(async () => {
+        setIsAborting(true);
+        abortMutation()
+            .then(() => {
+                return invalidateQueries();
+            })
+            .finally(() => {
+                setIsAborting(false);
+            });
+    }, [abortMutation, invalidateQueries]);
+
+    const wizardState: StepperWizardState = useMemo(
+        () => getWizardState(nodeInfo, isAborting),
+        [nodeInfo, isAborting]
+    );
+
+    return {
+        nodeInfo,
+        meshInfo,
+        isLoading,
+        allNodesReadyForApply,
+        allNodesConfirmed,
+        abort,
+        wizardState,
+    };
 };
 
 export const ConfigContext = createContext<
