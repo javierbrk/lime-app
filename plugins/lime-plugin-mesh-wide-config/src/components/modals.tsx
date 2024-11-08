@@ -7,7 +7,10 @@ import InputField from "components/inputs/InputField";
 import switchStyle from "components/switch";
 
 import { EditableField } from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
-import { useParallelReadyForApply } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
+import {
+    useParallelConfirmConfig,
+    useParallelReadyForApply,
+} from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { useMeshConfig } from "plugins/lime-plugin-mesh-wide-config/src/providers/useMeshConfigProvider";
 import {
     IUseParallelQueriesModalProps,
@@ -198,6 +201,38 @@ export const ScheduleSafeRebootModal = (
         <ParallelQueriesModal
             cb={() => {
                 startScheduleMeshUpgrade();
+                props.onClose();
+            }}
+            title={title}
+            {...props}
+        >
+            {content}
+        </ParallelQueriesModal>
+    );
+};
+
+export const ConfirmModal = (props: IUseParallelQueriesModalProps) => {
+    const { callMutations } = useParallelConfirmConfig();
+    let title = <Trans>All nodes applied the configuration</Trans>;
+    let content = (
+        <Trans>
+            Confirm configuration works properlly for al updated nodes
+        </Trans>
+    );
+    // this is not yet imlemented since we are not storing any information of mesh previous state
+    if (!props.isSuccess) {
+        title = <Trans>Some nodes don't upgraded properly</Trans>;
+        content = (
+            <Trans>
+                Are you sure you want to confirm the upgrade? <br />
+                Check node list to see the network status
+            </Trans>
+        );
+    }
+    return (
+        <ParallelQueriesModal
+            cb={() => {
+                callMutations();
                 props.onClose();
             }}
             title={title}

@@ -148,7 +148,7 @@ export type UseParallelReadyForApplyType = ReturnType<
 >;
 export const useParallelReadyForApply = (
     opts?: UseMutationOptions<
-        any,
+        MeshWideRPCReturnTypes,
         RemoteNodeCallError,
         IMutationFnVariables<StartSafeRebootParams>
     >
@@ -159,14 +159,13 @@ export const useParallelReadyForApply = (
         nodes,
         (node) => node.transaction_state === "READY_FOR_APPLY"
     );
-    // todo(kon): infer types properly, dont use any
-    return useMeshWideSyncCall<StartSafeRebootParams, any>({
+    return useMeshWideSyncCall<StartSafeRebootParams, MeshWideRPCReturnTypes>({
         mutationKey: MeshConfigQueryKeys.startSafeReboot,
         mutationFn: ({ ip, variables }) =>
             callToRemoteNode({
                 ip,
                 apiCall: (customApi) =>
-                    standarizedApiCall({
+                    standarizedApiCall<MeshWideRPCReturnTypes>({
                         apiService: customApi,
                         args: [
                             ...MeshConfigQueryKeys.startSafeReboot,
@@ -175,6 +174,38 @@ export const useParallelReadyForApply = (
                                 start_delay: 63,
                             },
                         ],
+                    }),
+            }),
+        ips,
+        options: opts,
+    });
+};
+
+export type UseParallelConfirmConfig = ReturnType<
+    typeof useParallelConfirmConfig
+>;
+export const useParallelConfirmConfig = (
+    opts?: UseMutationOptions<
+        MeshWideRPCReturnTypes,
+        RemoteNodeCallError,
+        IMutationFnVariables<null>
+    >
+) => {
+    // State to store the errors
+    const { data: nodes } = useMeshWideConfigState({});
+    const ips = getNodeIpsByConfigCondition(
+        nodes,
+        (node) => node.transaction_state === "CONFIRMATION_PENDING"
+    );
+    return useMeshWideSyncCall({
+        mutationKey: MeshConfigQueryKeys.confirm,
+        mutationFn: ({ ip }) =>
+            callToRemoteNode({
+                ip,
+                apiCall: (customApi) =>
+                    standarizedApiCall({
+                        apiService: customApi,
+                        args: [...MeshConfigQueryKeys.confirm],
                     }),
             }),
         ips,
