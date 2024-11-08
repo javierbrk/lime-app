@@ -16,7 +16,6 @@ export type MainNodeStatusType = "NO" | "MAIN_NODE";
 
 export type ConfigUpdateState =
     | "DEFAULT" // When no config has changed
-    | "WORKING" // when a user starts changing the config
     | "READY_FOR_APPLY" //the config is set in the node and is ready to reboot
     | "RESTART_SCHEDULED" // the node will reboot in xx seconds
     | "CONFIRMATION_PENDING" // the node rebooted and the configuration is not confirmed
@@ -31,7 +30,7 @@ export interface NodeMeshConfigInfo {
     node_ip: string;
     transaction_state: ConfigUpdateState;
     current_config_hash: string;
-    safe_restart_remining: number;
+    safe_restart_remaining: number;
     retry_count: number;
     safe_restart_start_time_out: number;
     safe_restart_start_mark: number;
