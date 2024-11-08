@@ -28,13 +28,14 @@ const NextStepFooter = () => {
         onClose: closeAbort,
     } = useDisclosure();
     const [showEditConfig, setShowEditConfig] = useState(false);
-    const { nodeInfo, wizardState, allNodesReadyForApply } = useMeshConfig();
+    const { wizardState, allNodesReadyForApply } = useMeshConfig();
 
     const step: IStatusAndButton | null = useMemo(() => {
         let step: IStatusAndButton | null = null;
         if (showEditConfig) return null;
 
         switch (wizardState) {
+            case "ABORTED":
             case "DEFAULT":
                 step = {
                     status: "success",
@@ -75,7 +76,7 @@ const NextStepFooter = () => {
                 break;
             }
         }
-        if (isShowAbortButtonState(nodeInfo.transaction_state)) {
+        if (isShowAbortButtonState(wizardState)) {
             const showAbort: Pick<
                 IStatusAndButton,
                 "btnCancel" | "onClickCancel"
@@ -86,7 +87,7 @@ const NextStepFooter = () => {
             step = { ...step, ...showAbort };
         }
         return step;
-    }, [allNodesReadyForApply, nodeInfo.transaction_state, showEditConfig]);
+    }, [allNodesReadyForApply, openAbort, showEditConfig, wizardState]);
 
     if (showEditConfig) {
         return <LimeConfigEditForm onClose={() => setShowEditConfig(false)} />;
