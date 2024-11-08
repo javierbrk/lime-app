@@ -5,33 +5,41 @@ import { Button } from "components/buttons/button";
 import WizardWrapper from "components/mesh-wide-wizard/WizardWrapper";
 
 import LimeConfigEditForm from "plugins/lime-plugin-mesh-wide-config/src/containers/LimeConfigEditForm";
+import NextStepFooter from "plugins/lime-plugin-mesh-wide-config/src/containers/NextStepFooter";
 import NodesListPage from "plugins/lime-plugin-mesh-wide-config/src/containers/NodesListPage";
 import StatusPage from "plugins/lime-plugin-mesh-wide-config/src/containers/StatusPage";
+import {
+    ConfigProvider,
+    useMeshConfig,
+} from "plugins/lime-plugin-mesh-wide-config/src/providers/useMeshConfigProvider";
 
-const MeshConfigPage = () => {
-    const [showEditConfig, setShowEditConfig] = useState(false);
+const MeshConfig = () => {
+    const {
+        isLoading: meshConfigLoading,
+        meshInfo,
+        nodeInfo,
+    } = useMeshConfig();
 
-    if (showEditConfig) {
-        return <LimeConfigEditForm onClose={() => setShowEditConfig(false)} />;
-    }
-    const Buttonx = () => {
-        return (
-            <Button onClick={() => setShowEditConfig(true)}>Show modal</Button>
-        );
-    };
+    const isLoading =
+        meshConfigLoading || nodeInfo === undefined || meshInfo === undefined;
 
     return (
         <WizardWrapper
             // error={error}
             // isError={isError}
-            isLoading={false}
+            isLoading={isLoading}
             // banner={BannerNotification}
             statusPage={StatusPage}
             nodesList={NodesListPage}
-            footer={Buttonx}
-            // footer={NextStepFooter}
+            footer={NextStepFooter}
         />
     );
 };
+
+const MeshConfigPage = () => (
+    <ConfigProvider>
+        <MeshConfig />
+    </ConfigProvider>
+);
 
 export default MeshConfigPage;
