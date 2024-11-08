@@ -7,6 +7,7 @@ import InputField from "components/inputs/InputField";
 import switchStyle from "components/switch";
 
 import { EditableField } from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
+import { useMeshConfig } from "plugins/lime-plugin-mesh-wide-config/src/providers/useMeshConfigProvider";
 
 export const DeletePropModal = ({
     prop,
@@ -133,5 +134,32 @@ export const AddNewSectionModal = ({
                 </Modal>
             </form>
         </FormProvider>
+    );
+};
+
+export const AbortModal = ({
+    ...props
+}: Pick<ModalProps, "isOpen" | "onClose">) => {
+    const { abort } = useMeshConfig();
+    const title = <Trans>Abort current mesh wide configuration update?</Trans>;
+    const content = (
+        <Trans>
+            This will the abort current configuration update process on all
+            nodes. Are you sure you want to proceed?
+        </Trans>
+    );
+    const btnTxt = <Trans>Abort</Trans>;
+    return (
+        <Modal
+            title={title}
+            deleteBtnText={btnTxt}
+            onDelete={() => {
+                abort();
+                props.onClose();
+            }}
+            {...props}
+        >
+            {content}
+        </Modal>
     );
 };
