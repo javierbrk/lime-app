@@ -9,6 +9,7 @@ import { IStatusAndButton } from "components/status/statusAndButton";
 
 import {
     AbortModal,
+    ConfirmModal,
     ScheduleSafeRebootModal,
 } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
 import LimeConfigEditForm from "plugins/lime-plugin-mesh-wide-config/src/containers/LimeConfigEditForm";
@@ -36,7 +37,14 @@ const NextStepFooter = () => {
         onOpen: openScheduleModal,
         onClose: closeScheduleModal,
     } = useDisclosure();
+
+    const {
+        open: showConfirmationModal,
+        onOpen: openConfirmationModal,
+        onClose: closeConfirmationModal,
+    } = useDisclosure();
     const [showEditConfig, setShowEditConfig] = useState(false);
+
     const { wizardState, allNodesReadyForApply } = useMeshConfig();
     const { errors: scheduleErrors } = useParallelReadyForApply();
 
@@ -102,6 +110,14 @@ const NextStepFooter = () => {
                 };
                 break;
             }
+            case "CONFIRMATION_PENDING":
+                step = {
+                    status: "success",
+                    onClick: openConfirmationModal,
+                    children: <Trans>Confirm configuration on all nodes</Trans>,
+                    btn: <Trans>Confirm</Trans>,
+                };
+                break;
         }
         if (isShowAbortButtonState(wizardState)) {
             const showAbort: Pick<
@@ -127,19 +143,11 @@ const NextStepFooter = () => {
                     {step.children}
                 </FooterStatus>
             )}
-
-            {/*{footer}*/}
-            {/*<FooterStatus {...step} fixed={false} />*/}
-            {/*<ScheduleUpgradeModal*/}
-            {/*    isSuccess={allNodesReadyForUpgrade}*/}
-            {/*    isOpen={showScheduleModal}*/}
-            {/*    onClose={closeScheduleModal}*/}
-            {/*/>*/}
-            {/*<ConfirmModal*/}
-            {/*    isOpen={showConfirmationModal}*/}
-            {/*    onClose={closeConfirmationModal}*/}
-            {/*    isSuccess // Ideally we have to implement some kind of state before run the upgrade to check if all nodes are up again.*/}
-            {/*/>*/}
+            <ConfirmModal
+                isOpen={showConfirmationModal}
+                onClose={closeConfirmationModal}
+                isSuccess // Ideally we have to implement some kind of state before run the upgrade to check if all nodes are up again.
+            />
             <ScheduleSafeRebootModal
                 isSuccess={allNodesReadyForApply}
                 isOpen={showScheduleModal}

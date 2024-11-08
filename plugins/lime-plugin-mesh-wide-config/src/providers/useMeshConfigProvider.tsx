@@ -3,10 +3,12 @@ import { useState } from "preact/hooks";
 import { useCallback, useContext, useMemo } from "react";
 
 import {
+    UseParallelConfirmConfig,
     UseParallelReadyForApplyType,
     useConfigNodeState,
     useMeshWideConfigState,
     useParallelAbort,
+    useParallelConfirmConfig,
     useParallelReadyForApply,
 } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { MeshConfigQueryKeys } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueriesKeys";
@@ -22,8 +24,10 @@ const NODE_STATUS_REFETCH_INTERVAL = 5000;
 const getWizardState = (
     nodeInfo: NodeMeshConfigInfo | undefined,
     isAborting: boolean,
-    scheduleSafeReboot: UseParallelReadyForApplyType | undefined
+    scheduleSafeReboot: UseParallelReadyForApplyType | undefined,
+    confirmConfig: UseParallelConfirmConfig | undefined
 ): StepperWizardState => {
+    if (!nodeInfo) return;
     if (isAborting) return "ABORTING";
     if (scheduleSafeReboot?.isLoading) {
         return "SENDING_START_SCHEDULE";
@@ -33,6 +37,17 @@ const getWizardState = (
         scheduleSafeReboot?.errors?.length
     ) {
         return "RESTART_SCHEDULED";
+    }
+    if (
+        nodeInfo.transaction_state === "CONFIRMATION_PENDING" ||
+        nodeInfo.transaction_state === "CONFIRMED"
+    ) {
+        if (confirmConfig?.isLoading) {
+            return "SENDING_CONFIRMATION";
+        }
+        if (confirmConfig?.errors?.length) {
+            return "CONFIRMATION_PENDING";
+        }
     }
     return nodeInfo?.transaction_state ?? "DEFAULT";
 };
@@ -46,6 +61,7 @@ export const useMeshConfigProvider = () => {
     }, []);
 
     const scheduleSafeReboot = useParallelReadyForApply();
+    const confirmConfig = useParallelConfirmConfig();
 
     const {
         data: meshInfo,
@@ -89,7 +105,13 @@ export const useMeshConfigProvider = () => {
     }, [abortMutation, invalidateQueries]);
 
     const wizardState: StepperWizardState = useMemo(
-        () => getWizardState(nodeInfo, isAborting, scheduleSafeReboot),
+        () =>
+            getWizardState(
+                nodeInfo,
+                isAborting,
+                scheduleSafeReboot,
+                confirmConfig
+            ),
         [nodeInfo, isAborting]
     );
 
