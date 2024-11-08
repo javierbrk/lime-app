@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 
 import {
+    RemoteNodeCallError,
     callToRemoteNode,
     doSharedStateApiCall,
 } from "components/shared-state/SharedStateApi";
@@ -25,7 +26,10 @@ import { parseConfigFile } from "plugins/lime-plugin-mesh-wide-config/src/utils/
 import { MeshWideRPCReturnTypes } from "plugins/lime-plugin-mesh-wide-upgrade/src/meshUpgradeTypes";
 import { getNodeIpsByConfigCondition } from "plugins/lime-plugin-mesh-wide-upgrade/src/utils/api";
 
-import { useMeshWideSyncCall } from "utils/meshWideSyncCall";
+import {
+    IMutationFnVariables,
+    useMeshWideSyncCall,
+} from "utils/meshWideSyncCall";
 import {
     ApiServiceParamsType,
     StandarizedApiError,
@@ -126,6 +130,51 @@ export const useParallelAbort = (opts?) => {
                     standarizedApiCall({
                         apiService: customApi,
                         args: MeshConfigQueryKeys.remoteAbort,
+                    }),
+            }),
+        ips,
+        options: opts,
+    });
+};
+
+// Parallel queries
+
+interface StartSafeRebootParams {
+    confirm_timeout: number;
+    start_delay: number;
+}
+export type UseParallelReadyForApplyType = ReturnType<
+    typeof useParallelReadyForApply
+>;
+export const useParallelReadyForApply = (
+    opts?: UseMutationOptions<
+        any,
+        RemoteNodeCallError,
+        IMutationFnVariables<StartSafeRebootParams>
+    >
+) => {
+    // State to store the errors
+    const { data: nodes } = useMeshWideConfigState({});
+    const ips = getNodeIpsByConfigCondition(
+        nodes,
+        (node) => node.transaction_state === "READY_FOR_APPLY"
+    );
+    // todo(kon): infer types properly, dont use any
+    return useMeshWideSyncCall<StartSafeRebootParams, any>({
+        mutationKey: MeshConfigQueryKeys.startSafeReboot,
+        mutationFn: ({ ip, variables }) =>
+            callToRemoteNode({
+                ip,
+                apiCall: (customApi) =>
+                    standarizedApiCall({
+                        apiService: customApi,
+                        args: [
+                            ...MeshConfigQueryKeys.startSafeReboot,
+                            variables ?? {
+                                confirm_timeout: 2001,
+                                start_delay: 63,
+                            },
+                        ],
                     }),
             }),
         ips,

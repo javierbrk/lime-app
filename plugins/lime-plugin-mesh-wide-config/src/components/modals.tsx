@@ -7,7 +7,12 @@ import InputField from "components/inputs/InputField";
 import switchStyle from "components/switch";
 
 import { EditableField } from "plugins/lime-plugin-mesh-wide-config/src/components/FormEdit";
+import { useParallelReadyForApply } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { useMeshConfig } from "plugins/lime-plugin-mesh-wide-config/src/providers/useMeshConfigProvider";
+import {
+    IUseParallelQueriesModalProps,
+    ParallelQueriesModal,
+} from "plugins/lime-plugin-mesh-wide-upgrade/src/components/modals";
 
 export const DeletePropModal = ({
     prop,
@@ -161,5 +166,44 @@ export const AbortModal = ({
         >
             {content}
         </Modal>
+    );
+};
+
+export const ScheduleSafeRebootModal = (
+    props: IUseParallelQueriesModalProps
+) => {
+    const { callMutations: startScheduleMeshUpgrade } =
+        useParallelReadyForApply();
+
+    let title = <Trans>All nodes are ready</Trans>;
+    let content = (
+        <Trans>
+            Apply configuration on all of them with a scheduled safe reboot?
+        </Trans>
+    );
+    if (!props.isSuccess) {
+        title = <Trans>Some nodes are not ready</Trans>;
+        content = (
+            <Trans>
+                Are you sure you want to apply the configuration to the nodes
+                that are ready? <br />
+                This will make some of them to reboot
+                <br />
+                Check node list to see the network status
+            </Trans>
+        );
+    }
+
+    return (
+        <ParallelQueriesModal
+            cb={() => {
+                startScheduleMeshUpgrade();
+                props.onClose();
+            }}
+            title={title}
+            {...props}
+        >
+            {content}
+        </ParallelQueriesModal>
     );
 };
