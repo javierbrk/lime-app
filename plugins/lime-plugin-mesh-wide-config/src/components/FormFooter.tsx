@@ -1,17 +1,36 @@
 import { Trans } from "@lingui/macro";
 import { useFormContext } from "react-hook-form";
 
+import { IFullScreenModalProps } from "components/Modal/FullScreenModal";
 import { FooterStatus } from "components/status/footer";
+import { useToast } from "components/toast/toastProvider";
 
+import { useSetCommunityConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { IMeshWideConfig } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 import { jsonToConfig } from "plugins/lime-plugin-mesh-wide-config/src/utils/jsonParser";
 
-export const FormFooter = ({ isDirty }: { isDirty: boolean }) => {
+export const FormFooter = ({
+    onClose,
+    isDirty,
+}: { isDirty: boolean } & Pick<IFullScreenModalProps, "onClose">) => {
+    const { showToast } = useToast();
     const { handleSubmit } = useFormContext<IMeshWideConfig>();
-
+    const { mutate, isLoading } = useSetCommunityConfig({
+        onError: () => {
+            showToast({
+                text: <Trans>Error updating the new configuration</Trans>,
+            });
+        },
+        onSuccess: () => {
+            showToast({
+                text: <Trans>Starting mesh wide configuration change</Trans>,
+            });
+            onClose();
+        },
+    });
     const onSubmit = (data: IMeshWideConfig) => {
-        console.log("Form", data);
-        console.log(jsonToConfig(data));
+        const newConfig = jsonToConfig(data);
+        mutate({ file_contents: newConfig });
     };
 
     let message = <Trans>No changes made</Trans>;
@@ -32,7 +51,7 @@ export const FormFooter = ({ isDirty }: { isDirty: boolean }) => {
             status={isDirty ? "success" : "warning"}
             btn={<Trans>Start Lime Config update</Trans>}
             btnProps={{
-                disabled: !isDirty,
+                disabled: !isDirty || isLoading,
             }}
             onClick={() => {
                 handleSubmit(onSubmit)();

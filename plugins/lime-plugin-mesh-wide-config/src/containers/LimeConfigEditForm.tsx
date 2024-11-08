@@ -25,7 +25,10 @@ const LimeConfigEditForm = (props: Partial<IFullScreenModalProps>) => {
             {...props}
         >
             {!!meshWideConfig && (
-                <EditConfigForm meshWideConfig={meshWideConfig} />
+                <EditConfigForm
+                    meshWideConfig={meshWideConfig}
+                    onClose={props.onClose}
+                />
             )}
         </FullScreenModal>
     );
@@ -33,9 +36,10 @@ const LimeConfigEditForm = (props: Partial<IFullScreenModalProps>) => {
 
 const EditConfigForm = ({
     meshWideConfig,
+    onClose,
 }: {
     meshWideConfig: IMeshWideConfig;
-}) => {
+} & Pick<IFullScreenModalProps, "onClose">) => {
     const [isDirty, setIsDirty] = useState(false);
     const fMethods = useForm<IMeshWideConfig>({
         defaultValues: meshWideConfig,
@@ -74,7 +78,7 @@ const EditConfigForm = ({
                         ))}
                     <AddNewConfigSection />
                 </div>
-                <FormFooter isDirty={isDirty} />
+                <FormFooter onClose={onClose} isDirty={isDirty} />
             </form>
         </FormProvider>
     );
