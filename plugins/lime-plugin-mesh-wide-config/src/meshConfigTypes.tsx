@@ -47,4 +47,7 @@ export interface MeshWideConfigState {
     [key: string]: MeshWideNodeConfigInfo;
 }
 
-export type StepperWizardState = "ABORTING" | ConfigUpdateState;
+export type StepperWizardState =
+    | "ABORTING"
+    | "SENDING_START_SCHEDULE"
+    | ConfigUpdateState;

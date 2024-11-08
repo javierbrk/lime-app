@@ -1,7 +1,9 @@
+import { useParallelReadyForApply } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { useMeshConfig } from "plugins/lime-plugin-mesh-wide-config/src/providers/useMeshConfigProvider";
 
 const StatusPage = () => {
     const { wizardState, nodeInfo } = useMeshConfig();
+    const { errors, results } = useParallelReadyForApply();
 
     switch (wizardState) {
         case "ABORTED":
@@ -11,13 +13,20 @@ const StatusPage = () => {
         case "READY_FOR_APPLY":
             return <>Ready for apply</>;
         case "RESTART_SCHEDULED":
-            return <>Restart scheduled</>;
+            return (
+                <>
+                    <>Restart scheduled on {results.length} nodes</>
+                    with {errors.length} errors
+                </>
+            );
         case "CONFIRMED":
             return <>Confirmed</>;
         case "ABORTING":
             return <>Aborting</>;
         case "CONFIRMATION_PENDING":
             return <>Confirmation pending</>;
+        case "SENDING_START_SCHEDULE":
+            return <>Sending start schedule</>;
         case "DEFAULT":
         default:
             return <>Everything is up to date</>;

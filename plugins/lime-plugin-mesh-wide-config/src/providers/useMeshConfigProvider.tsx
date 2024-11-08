@@ -3,9 +3,11 @@ import { useState } from "preact/hooks";
 import { useCallback, useContext, useMemo } from "react";
 
 import {
+    UseParallelReadyForApplyType,
     useConfigNodeState,
     useMeshWideConfigState,
     useParallelAbort,
+    useParallelReadyForApply,
 } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { MeshConfigQueryKeys } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueriesKeys";
 import {
@@ -19,9 +21,19 @@ const NODE_STATUS_REFETCH_INTERVAL = 5000;
 
 const getWizardState = (
     nodeInfo: NodeMeshConfigInfo | undefined,
-    isAborting: boolean
+    isAborting: boolean,
+    scheduleSafeReboot: UseParallelReadyForApplyType | undefined
 ): StepperWizardState => {
     if (isAborting) return "ABORTING";
+    if (scheduleSafeReboot?.isLoading) {
+        return "SENDING_START_SCHEDULE";
+    }
+    if (
+        scheduleSafeReboot?.results?.length ||
+        scheduleSafeReboot?.errors?.length
+    ) {
+        return "RESTART_SCHEDULED";
+    }
     return nodeInfo?.transaction_state ?? "DEFAULT";
 };
 
@@ -32,6 +44,8 @@ export const useMeshConfigProvider = () => {
             queryKey: MeshConfigQueryKeys.getNodeStatus,
         });
     }, []);
+
+    const scheduleSafeReboot = useParallelReadyForApply();
 
     const {
         data: meshInfo,
@@ -75,7 +89,7 @@ export const useMeshConfigProvider = () => {
     }, [abortMutation, invalidateQueries]);
 
     const wizardState: StepperWizardState = useMemo(
-        () => getWizardState(nodeInfo, isAborting),
+        () => getWizardState(nodeInfo, isAborting, scheduleSafeReboot),
         [nodeInfo, isAborting]
     );
 

@@ -7,8 +7,12 @@ import { StatusIcons } from "components/icons/status";
 import { FooterStatus } from "components/status/footer";
 import { IStatusAndButton } from "components/status/statusAndButton";
 
-import { AbortModal } from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
+import {
+    AbortModal,
+    ScheduleSafeRebootModal,
+} from "plugins/lime-plugin-mesh-wide-config/src/components/modals";
 import LimeConfigEditForm from "plugins/lime-plugin-mesh-wide-config/src/containers/LimeConfigEditForm";
+import { useParallelReadyForApply } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
 import { ConfigUpdateState } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
 import { useMeshConfig } from "plugins/lime-plugin-mesh-wide-config/src/providers/useMeshConfigProvider";
 
@@ -27,8 +31,14 @@ const NextStepFooter = () => {
         onOpen: openAbort,
         onClose: closeAbort,
     } = useDisclosure();
+    const {
+        open: showScheduleModal,
+        onOpen: openScheduleModal,
+        onClose: closeScheduleModal,
+    } = useDisclosure();
     const [showEditConfig, setShowEditConfig] = useState(false);
     const { wizardState, allNodesReadyForApply } = useMeshConfig();
+    const { errors: scheduleErrors } = useParallelReadyForApply();
 
     const step: IStatusAndButton | null = useMemo(() => {
         let step: IStatusAndButton | null = null;
@@ -67,11 +77,28 @@ const NextStepFooter = () => {
                 }
                 step = {
                     status,
-                    onClick: () => {
-                        setShowEditConfig(true);
-                    },
+                    onClick: openScheduleModal,
                     btn: <Trans>Apply new configuration</Trans>,
                     children: text,
+                };
+                break;
+            }
+            case "RESTART_SCHEDULED": {
+                const data: Omit<IStatusAndButton, "status" | "children"> = {
+                    onClick: openScheduleModal,
+                    btn: <Trans>Schedule again</Trans>,
+                };
+                if (scheduleErrors?.length) {
+                    step = {
+                        ...data,
+                        status: "warning",
+                        children: <Trans>Some nodes have errors</Trans>,
+                    };
+                }
+                step = {
+                    ...data,
+                    status: "success",
+                    children: <Trans>All nodes scheduled successful</Trans>,
                 };
                 break;
             }
@@ -113,6 +140,11 @@ const NextStepFooter = () => {
             {/*    onClose={closeConfirmationModal}*/}
             {/*    isSuccess // Ideally we have to implement some kind of state before run the upgrade to check if all nodes are up again.*/}
             {/*/>*/}
+            <ScheduleSafeRebootModal
+                isSuccess={allNodesReadyForApply}
+                isOpen={showScheduleModal}
+                onClose={closeScheduleModal}
+            />
             <AbortModal isOpen={showAbort} onClose={closeAbort} />
         </>
     );
