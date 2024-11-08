@@ -19,8 +19,11 @@ export const standarizedApiCall = async <T>({
     apiService?: UhttpdService;
     args: ApiServiceParamsType;
 }) => {
+    if (args.length === 2) {
+        args.push({});
+    }
     const res = await apiService.call(...args);
-    if (res?.error) {
+    if (res?.error && res?.error !== "0" && res?.error !== 0) {
         throw new StandarizedApiError(res.error, res.code);
     }
     if (res.data) return res.data as T;

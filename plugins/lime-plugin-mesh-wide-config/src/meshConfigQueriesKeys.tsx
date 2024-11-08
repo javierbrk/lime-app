@@ -21,7 +21,8 @@ export const meshConfigQueryKeys = {
         ) as ApiServiceParamsType,
     getNodeStatus: (): ApiServiceParamsType =>
         MeshConfigQueryKeys.getNodeStatus,
-    getCommunityConfig: () => MeshConfigQueryKeys.getCommunityConfig,
+    getCommunityConfig: (): ApiServiceParamsType =>
+        MeshConfigQueryKeys.getCommunityConfig,
     remoteConfirmUpgrade: (): ApiServiceParamsType =>
         MeshConfigQueryKeys.remoteConfirmUpgrade,
     startSafeReboot: (): ApiServiceParamsType =>
