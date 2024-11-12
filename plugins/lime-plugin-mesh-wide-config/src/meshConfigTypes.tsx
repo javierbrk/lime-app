@@ -49,6 +49,7 @@ export interface MeshWideConfigState {
 
 export type StepperWizardState =
     | "ABORTING"
+    | "APPLYING" // the node is applying the configuration
     | "SENDING_START_SCHEDULE"
     | "SENDING_CONFIRMATION"
     | ConfigUpdateState;
