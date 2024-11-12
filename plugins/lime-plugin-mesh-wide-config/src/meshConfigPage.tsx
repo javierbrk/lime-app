@@ -1,10 +1,8 @@
-import { useState } from "preact/hooks";
 import React from "react";
 
-import { Button } from "components/buttons/button";
+import { AbortedNotification } from "components/mesh-wide-wizard/StepState";
 import WizardWrapper from "components/mesh-wide-wizard/WizardWrapper";
 
-import LimeConfigEditForm from "plugins/lime-plugin-mesh-wide-config/src/containers/LimeConfigEditForm";
 import NextStepFooter from "plugins/lime-plugin-mesh-wide-config/src/containers/NextStepFooter";
 import NodesListPage from "plugins/lime-plugin-mesh-wide-config/src/containers/NodesListPage";
 import StatusPage from "plugins/lime-plugin-mesh-wide-config/src/containers/StatusPage";
@@ -18,6 +16,7 @@ const MeshConfig = () => {
         isLoading: meshConfigLoading,
         meshInfo,
         nodeInfo,
+        wizardState,
     } = useMeshConfig();
 
     const isLoading =
@@ -28,7 +27,7 @@ const MeshConfig = () => {
             // error={error}
             // isError={isError}
             isLoading={isLoading}
-            // banner={BannerNotification}
+            banner={wizardState === "ABORTED" ? AbortedNotification : null}
             statusPage={StatusPage}
             nodesList={NodesListPage}
             footer={NextStepFooter}
