@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 
-import { StatusIcon } from "components/icons/status";
+import { AbortedNotification } from "components/mesh-wide-wizard/StepState";
 import WizardWrapper from "components/mesh-wide-wizard/WizardWrapper";
 import Notification from "components/notifications/notification";
 
@@ -22,16 +22,7 @@ const BannerNotification = () => {
                     while and will require user interaction.
                 </Trans>
             </Notification>
-            {thisNode.upgrade_state === "ABORTED" && (
-                <div
-                    className={
-                        "flex flex-row gap-3 justify-start content-center px-4 py-4 w-full bg-primary-card "
-                    }
-                >
-                    <StatusIcon status={"success"} />
-                    <Trans>This node aborted successfully</Trans>
-                </div>
-            )}
+            {thisNode.upgrade_state === "ABORTED" && <AbortedNotification />}
         </>
     );
 };
