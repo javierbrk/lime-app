@@ -115,6 +115,8 @@ export const useMeshConfigProvider = () => {
         [nodeInfo, isAborting]
     );
 
+    const totalNodes = meshInfo && Object.entries(meshInfo).length;
+
     return {
         nodeInfo,
         meshInfo,
@@ -123,6 +125,7 @@ export const useMeshConfigProvider = () => {
         allNodesConfirmed,
         abort,
         wizardState,
+        totalNodes,
     };
 };
 

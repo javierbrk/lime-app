@@ -1,47 +1,68 @@
+import { Trans } from "@lingui/macro";
+
+import { ErrorState } from "components/mesh-wide-wizard/ErrorState";
+import { LoadingPage } from "components/mesh-wide-wizard/LoadingPage";
+
 import {
-    useParallelConfirmConfig,
-    useParallelReadyForApply,
-} from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueries";
+    ConfirmationPending,
+    Confirmed,
+    DefaultState,
+    RadyForApply,
+    RestartScheduled,
+} from "plugins/lime-plugin-mesh-wide-config/src/components/StepStates";
 import { useMeshConfig } from "plugins/lime-plugin-mesh-wide-config/src/providers/useMeshConfigProvider";
 
 const StatusPage = () => {
     const { wizardState, nodeInfo } = useMeshConfig();
-    const { errors, results } = useParallelReadyForApply();
-    const { errors: confirmErrors, results: confirmResults } =
-        useParallelConfirmConfig();
 
     switch (wizardState) {
-        case "ABORTED":
-            return <>Aborted</>;
         case "ERROR":
-            return <>{nodeInfo.error}</>;
+            return <ErrorState msg={nodeInfo?.error.toString()} />;
         case "READY_FOR_APPLY":
-            return <>Ready for apply</>;
+            return <RadyForApply />;
         case "RESTART_SCHEDULED":
-            return (
-                <>
-                    Restart scheduled on {results?.length ?? 0} nodes with{" "}
-                    {errors?.length ?? 0} errors
-                </>
-            );
+            return <RestartScheduled />;
         case "CONFIRMED":
-            return (
-                <>
-                    Confirmed {confirmResults?.length ?? 0} nodes with{" "}
-                    {confirmErrors?.length ?? 0} errors
-                </>
-            );
+            return <Confirmed />;
         case "ABORTING":
-            return <>Aborting</>;
+            return (
+                <LoadingPage
+                    title={<Trans>Aborting</Trans>}
+                    description={
+                        <Trans>
+                            Sending abort message to this node. The abort order
+                            will be propagated to all nodes.
+                        </Trans>
+                    }
+                />
+            );
         case "CONFIRMATION_PENDING":
-            return <>Confirmation pending</>;
+            return <ConfirmationPending />;
         case "SENDING_START_SCHEDULE":
-            return <>Sending start schedule</>;
+            return (
+                <LoadingPage
+                    title={<Trans>Scheduling apply configuration</Trans>}
+                    description={
+                        <Trans>
+                            Schedule apply configuration to all available nodes
+                        </Trans>
+                    }
+                />
+            );
         case "SENDING_CONFIRMATION":
-            return <>Sending confirmation</>;
+            return (
+                <LoadingPage
+                    title={<Trans>Sending confirmation</Trans>}
+                    description={
+                        <Trans>
+                            Confirming new configuration to available nodes
+                        </Trans>
+                    }
+                />
+            );
         case "DEFAULT":
         default:
-            return <>Everything is up to date</>;
+            return <DefaultState />;
     }
 };
 
