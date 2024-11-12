@@ -1,5 +1,5 @@
 import { ComponentChildren, createContext } from "preact";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { useCallback, useContext, useMemo } from "react";
 
 import {
@@ -25,7 +25,8 @@ const getWizardState = (
     nodeInfo: NodeMeshConfigInfo | undefined,
     isAborting: boolean,
     scheduleSafeReboot: UseParallelReadyForApplyType | undefined,
-    confirmConfig: UseParallelConfirmConfig | undefined
+    confirmConfig: UseParallelConfirmConfig | undefined,
+    isNodeInfoError: boolean
 ): StepperWizardState => {
     if (!nodeInfo) return;
     if (isAborting) return "ABORTING";
@@ -49,6 +50,10 @@ const getWizardState = (
             return "CONFIRMATION_PENDING";
         }
     }
+    // We suppose that if the upgrade is scheduled, and we lost the connection is because is upgrading
+    if (nodeInfo.transaction_state === "RESTART_SCHEDULED" && isNodeInfoError) {
+        return "APPLYING";
+    }
     return nodeInfo?.transaction_state ?? "DEFAULT";
 };
 
@@ -60,18 +65,29 @@ export const useMeshConfigProvider = () => {
         });
     }, []);
 
+    const invalidateLogin = useCallback(() => {
+        queryCache.invalidateQueries({
+            queryKey: ["session", "get"],
+        });
+    }, []);
+
     const scheduleSafeReboot = useParallelReadyForApply();
     const confirmConfig = useParallelConfirmConfig();
 
     const {
         data: meshInfo,
         isLoading: meshInfoLoading,
-        // isError: isMeshInfoQueryError,
-        // error: meshInfoQueryError,
+        isError: isMeshInfoQueryError,
+        error: meshInfoQueryError,
     } = useMeshWideConfigState({
         refetchInterval: NODE_STATUS_REFETCH_INTERVAL,
     });
-    const { data: nodeInfo, isLoading: nodeInfoLoading } = useConfigNodeState({
+    const {
+        data: nodeInfo,
+        isLoading: nodeInfoLoading,
+
+        isError: isNodeInfoError,
+    } = useConfigNodeState({
         refetchInterval: NODE_STATUS_REFETCH_INTERVAL,
     });
 
@@ -110,12 +126,31 @@ export const useMeshConfigProvider = () => {
                 nodeInfo,
                 isAborting,
                 scheduleSafeReboot,
-                confirmConfig
+                confirmConfig,
+                isNodeInfoError
             ),
         [nodeInfo, isAborting]
     );
 
     const totalNodes = meshInfo && Object.entries(meshInfo).length;
+
+    let isError;
+    let error;
+    // If the state is upgrading, ignore the errors because is normal to lose the connection
+    if (wizardState !== "APPLYING") {
+        isError = isMeshInfoQueryError;
+        error = meshInfoQueryError;
+    }
+
+    useEffect(() => {
+        if (
+            meshInfoQueryError &&
+            (meshInfoQueryError as any).code != null &&
+            (meshInfoQueryError as any).code === -32002 // Auth failed error code
+        ) {
+            invalidateLogin();
+        }
+    }, [invalidateLogin, meshInfoQueryError, wizardState]);
 
     return {
         nodeInfo,
@@ -126,6 +161,8 @@ export const useMeshConfigProvider = () => {
         abort,
         wizardState,
         totalNodes,
+        isError,
+        error,
     };
 };
 

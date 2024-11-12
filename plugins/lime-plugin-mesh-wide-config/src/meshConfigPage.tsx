@@ -17,6 +17,8 @@ const MeshConfig = () => {
         meshInfo,
         nodeInfo,
         wizardState,
+        isError,
+        error,
     } = useMeshConfig();
 
     const isLoading =
@@ -24,8 +26,8 @@ const MeshConfig = () => {
 
     return (
         <WizardWrapper
-            // error={error}
-            // isError={isError}
+            error={error}
+            isError={isError}
             isLoading={isLoading}
             banner={wizardState === "ABORTED" ? AbortedNotification : null}
             statusPage={StatusPage}
