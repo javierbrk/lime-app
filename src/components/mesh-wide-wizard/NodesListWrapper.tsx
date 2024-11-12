@@ -2,9 +2,8 @@ import { Trans } from "@lingui/macro";
 import { ComponentType } from "preact";
 
 import Loading from "components/loading";
+import { StepState } from "components/mesh-wide-wizard/StepState";
 import { CenterFlex } from "components/mesh-wide-wizard/WizardWrapper";
-
-import { UpgradeState } from "plugins/lime-plugin-mesh-wide-upgrade/src/components/upgradeState/UpgradeState";
 
 type NodesListProps<T, K extends keyof T> = {
     data: Record<string, T> | null;
@@ -24,7 +23,7 @@ export const NodesListWrapper = <T, K extends keyof T>({
     if (!data || (data && Object.keys(data).length === 0)) {
         return (
             <CenterFlex>
-                <UpgradeState
+                <StepState
                     icon={null}
                     title={
                         <Trans>
