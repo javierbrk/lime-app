@@ -113,7 +113,7 @@ export const AddNewSectionModal = ({
                         render={({ field, fieldState: { error } }) => (
                             <InputField
                                 id={"name"}
-                                label={<Trans>Value</Trans>}
+                                label={<Trans>key</Trans>}
                                 className="w-100"
                                 error={error?.message}
                                 {...field}
