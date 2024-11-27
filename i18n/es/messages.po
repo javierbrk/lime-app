@@ -722,7 +722,7 @@ msgstr "Error deteniendo la búsqueda."
 
 #: plugins/lime-plugin-mesh-wide-config/src/components/FormFooter.tsx:21
 msgid "Error updating the new configuration"
-msgstr "Error al intentar actualizar la nueva configuración"
+msgstr "Error al intentar cambiar la nueva configuración"
 
 #: src/components/mesh-wide-wizard/ErrorState.tsx:12
 msgid "Error!"
@@ -1031,7 +1031,7 @@ msgstr "Sistema de la red"
 
 #: plugins/lime-plugin-mesh-wide-config/src/containers/NodesListPage.tsx:102
 msgid "Mesh configuration is on the last version"
-msgstr "La configuración de la red está actualizada"
+msgstr "La configuración de la red está en su última versión"
 
 #: plugins/lime-plugin-mesh-wide-upgrade/src/components/upgradeState/Confirmed.tsx:17
 msgid "Mesh upgrade confirmed successfully"
@@ -1150,7 +1150,7 @@ msgstr "Sin resultado de escaneo"
 
 #: plugins/lime-plugin-mesh-wide-config/src/containers/NodesListPage.tsx:83
 msgid "No update in progres"
-msgstr "No hay una actualización en curso."
+msgstr "No hay un cambio de configuración en curso."
 
 #: plugins/lime-plugin-mesh-wide-upgrade/src/utils/upgradeStatusMessages.tsx:15
 msgid "No upgrade in progres"
@@ -1238,7 +1238,7 @@ msgstr "O actualiza a la última versión del sistema (firmware)."
 #: plugins/lime-plugin-mesh-wide-config/src/containers/NodesListPage.tsx:167
 #: plugins/lime-plugin-mesh-wide-upgrade/src/utils/upgradeStatusMessages.tsx:95
 msgid "Other nodes will download the firmware from it"
-msgstr "Esto significa que otros nodos descargarán el archivo de sistema alojado en este nodo."
+msgstr "Esto significa que otros nodos descargarán el archivo alojado en este nodo."
 
 #: plugins/lime-plugin-metrics/src/components/box/index.js:110
 msgid "Packet loss"
@@ -1576,11 +1576,11 @@ msgstr "Ver consola"
 
 #: src/components/mesh-wide-wizard/WizardWrapper.tsx:66
 msgid "Show nodes"
-msgstr "Ver nodos"
+msgstr "Estado de los vecinos"
 
 #: src/components/mesh-wide-wizard/WizardWrapper.tsx:58
 msgid "Show state"
-msgstr "Ver estado"
+msgstr "Estado de este nodo"
 
 #: plugins/lime-plugin-mesh-wide/src/components/FeatureDetail/LinkDetail.tsx:119
 msgid "Signal"
@@ -1850,13 +1850,13 @@ msgstr "Estas MACs no están en el estado de referencia"
 #: plugins/lime-plugin-mesh-wide-config/src/containers/NodesListPage.tsx:144
 #: plugins/lime-plugin-mesh-wide-upgrade/src/utils/upgradeStatusMessages.tsx:74
 msgid "This node aborted"
-msgstr "Actualización interrumpida."
+msgstr "Este nodo interrumpió su proceso."
 
 #: plugins/lime-plugin-mesh-wide-config/src/containers/NodesListPage.tsx:89
 #: plugins/lime-plugin-mesh-wide-upgrade/src/utils/upgradeStatusMessages.tsx:22
 #: src/components/mesh-wide-wizard/StepState.tsx:69
 msgid "This node aborted successfully"
-msgstr "La actualización fue interrumpida con éxito."
+msgstr "Este nodo interrumpió su proceso."
 
 #: plugins/lime-plugin-mesh-wide-upgrade/src/utils/upgradeStatusMessages.tsx:42
 msgid "This node es ready for upgrade"
