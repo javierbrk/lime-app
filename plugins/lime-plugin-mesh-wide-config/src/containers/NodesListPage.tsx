@@ -11,10 +11,10 @@ import { useMeshWideConfigState } from "plugins/lime-plugin-mesh-wide-config/src
 import { meshConfigStateKey } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigQueriesKeys";
 import {
     ConfigUpdateState,
+    MainNodeStatusType,
     MeshWideNodeConfigInfo,
     NodeMeshConfigInfo,
 } from "plugins/lime-plugin-mesh-wide-config/src/meshConfigTypes";
-import { MainNodeStatusType } from "plugins/lime-plugin-mesh-wide-upgrade/src/meshUpgradeTypes";
 
 const NodeConfigItem = ({
     info,
@@ -155,16 +155,10 @@ type MainNodeInfoStatusMessageMapType = {
 
 export const mainNodeStatusMessageMap: MainNodeInfoStatusMessageMapType = {
     NO: null,
-    STARTING: {
-        title: <Trans>Setting up main node</Trans>,
-        description: (
-            <Trans>The become main node process is starting on this node</Trans>
-        ),
-    },
     MAIN_NODE: {
         title: <Trans>This is a main node</Trans>,
         description: (
-            <Trans>Other nodes will download the firmware from it</Trans>
+            <Trans>This node is sending new configuration to others</Trans>
         ),
     },
 };
