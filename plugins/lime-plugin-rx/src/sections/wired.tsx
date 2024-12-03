@@ -90,39 +90,8 @@ const tplink = [
     },
     {
         device: "eth0.1",
-        num: 2,
-        role: "lan",
-        link: "up",
-    },
-    {
-        device: "eth0.1",
-        num: 3,
-        role: "lan",
-        link: "down",
-    },
-    {
-        device: "eth0.1",
-        num: 4,
-        role: "lan",
-        link: "down",
-    },
-    {
-        device: "eth0.1",
         num: 0,
         role: "cpu",
-        link: "up",
-    },
-    // Modifactions
-    {
-        device: "eth0.3",
-        num: 0,
-        role: "lan",
-        link: "up",
-    },
-    {
-        device: "eth0.3",
-        num: 1,
-        role: "lan",
         link: "up",
     },
     {
@@ -135,7 +104,7 @@ const tplink = [
     {
         device: "eth0.2",
         num: 1,
-        role: "wan",
+        role: "cpu",
         link: "up",
     },
 ];
