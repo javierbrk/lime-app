@@ -33,6 +33,7 @@ export const parseConfigFile = (data: string): IMeshWideConfig => {
 
     lines.forEach((line) => {
         line = line.trim();
+        line = line.replace(/\\t/g, "");
 
         // Ignore comments or empty lines
         if (!line || line.startsWith("#")) {
