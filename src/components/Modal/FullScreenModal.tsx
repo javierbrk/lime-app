@@ -1,5 +1,4 @@
 import { ComponentChildren } from "preact";
-import { route } from "preact-router";
 
 import Loading from "components/loading";
 
@@ -30,19 +29,13 @@ export const FullScreenModal = ({
                 </div>
                 <div className={"text-4xl text-black"}>{title}</div>
             </div>
-            {isLoading ? (
-                <div class="flex items-center h-full items-center justify-center">
-                    <Loading />
-                </div>
-            ) : (
-                <div
-                    className={
-                        "flex flex-col pt-2 bg-white w-full min-h-full h-screen px-4"
-                    }
-                >
-                    {children}
-                </div>
-            )}
+            <div
+                className={
+                    "flex flex-col pt-2 bg-white w-full min-h-full h-screen px-4"
+                }
+            >
+                {isLoading ? <Loading /> : children}
+            </div>
         </div>
     );
 };
