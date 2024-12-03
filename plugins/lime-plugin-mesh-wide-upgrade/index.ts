@@ -6,4 +6,5 @@ export default {
     page: MeshUpgradePage,
     menu: MeshUpgradeMenu,
     isCommunityProtected: true,
+    menuGroup: "meshwide",
 } as LimePlugin;
