@@ -1,6 +1,5 @@
-import L from "leaflet";
 import { ComponentChildren } from "preact";
-import { useEffect, useRef } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 import {
     LayerGroup,
     LayersControl,
@@ -11,15 +10,17 @@ import {
 import { MeshWideMapTypes } from "components/shared-state/SharedStateTypes";
 
 import {
-    useLoadLeaflet,
-    useLocation,
-} from "plugins/lime-plugin-locate/src/locateQueries";
-import {
     BabelLinksLayer,
     BatmanLinksLayer,
     WifiLinksLayer,
 } from "plugins/lime-plugin-mesh-wide/src/containers/MapLayers/LinksLayers";
 import NodesLayer from "plugins/lime-plugin-mesh-wide/src/containers/MapLayers/NodesLayer";
+import style from "plugins/lime-plugin-mesh-wide/src/containers/style.less";
+import { useLocateNode } from "plugins/lime-plugin-mesh-wide/src/hooks/useLocateNode";
+import {
+    useLoadLeaflet,
+    useLocation,
+} from "plugins/lime-plugin-mesh-wide/src/locateNodeQueries";
 import { useSelectedMapFeature } from "plugins/lime-plugin-mesh-wide/src/meshWideQueries";
 
 const openStreetMapTileString = "https://{s}.tile.osm.org/{z}/{x}/{y}.png";
@@ -50,7 +51,8 @@ export const MeshWideMap = ({
         enabled: !!leafletData,
     });
 
-    const mapRef = useRef<L.Map | null>();
+    const { mapRef, editingLocation } = useLocateNode();
+
     const loading = assetsLoading || isLoadingLocation;
 
     useEffect(() => {
@@ -129,6 +131,9 @@ export const MeshWideMap = ({
                     )
                 )}
             </LayersControl>
+            {editingLocation && (
+                <div id="location-marker" className={style.locationMarker} />
+            )}
         </MapContainer>
     );
 };
