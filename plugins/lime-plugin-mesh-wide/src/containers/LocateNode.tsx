@@ -7,11 +7,13 @@ import {
     useChangeLocation,
     useLocation,
 } from "plugins/lime-plugin-mesh-wide/src/locateNodeQueries";
+import { useSelectedMapFeature } from "plugins/lime-plugin-mesh-wide/src/meshWideQueries";
 
 import queryCache from "utils/queryCache";
 
 const LocateNode = ({}) => {
     const { editingLocation, setEditingLocation, mapRef } = useLocateNode();
+    const { data: selectedMapFeature } = useSelectedMapFeature();
 
     const { data: nodeLocation, isLoading } = useLocation({});
 
@@ -44,7 +46,7 @@ const LocateNode = ({}) => {
         changeLocation({ lat: position.lat, lon: position.lng });
     };
 
-    if (!loaded) {
+    if (!loaded || selectedMapFeature) {
         return null;
     }
 
