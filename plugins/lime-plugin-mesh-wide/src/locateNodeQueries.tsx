@@ -30,16 +30,6 @@ export function useLocation(params) {
     });
 }
 
-// export function useNodesandlinks(params) {
-//     return useQuery(
-//         ["lime-location", "all_nodes_and_links"],
-//         getNodesandlinks,
-//         {
-//             ...params,
-//         }
-//     );
-// }
-
 interface IChangeUserParams {
     lat: number;
     lon: number;

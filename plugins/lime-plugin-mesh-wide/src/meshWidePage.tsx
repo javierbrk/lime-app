@@ -4,7 +4,6 @@ import React from "react";
 import Loading from "components/loading";
 
 import { FloatingAlert } from "plugins/lime-plugin-mesh-wide/src/components/Map/FloatingAlert";
-import LocateNode from "plugins/lime-plugin-mesh-wide/src/containers/LocateNode";
 import { MeshWideMap } from "plugins/lime-plugin-mesh-wide/src/containers/Map";
 import { SelectedFeatureBottomSheet } from "plugins/lime-plugin-mesh-wide/src/containers/SelectedFeatureBottomSheet";
 import { LocateNodeProvider } from "plugins/lime-plugin-mesh-wide/src/hooks/useLocateNode";
@@ -48,7 +47,6 @@ const MeshWide = () => {
             <FloatingAlert />
             <MeshWideMap />
             <SelectedFeatureBottomSheet />
-            <LocateNode />
         </>
     );
 };
