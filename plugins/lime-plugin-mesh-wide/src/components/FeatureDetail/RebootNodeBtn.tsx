@@ -77,7 +77,7 @@ const RebootNodeModal = ({
                 {isLoading && <Loading />}
                 {!isLoading && (
                     <div className={"mt-4"}>
-                        <label htmlFor={"password"}>Node password</label>
+                        <label htmlFor={"password"}><Trans>Node password</Trans></label>
                         <input
                             type="password"
                             id={"password"}

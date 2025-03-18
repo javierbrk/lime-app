@@ -83,7 +83,7 @@ export const AlignmentCard = ({ status }: { status: StatusResponse }) => {
             )}
             {!hasMostActive && (
                 <div className={"flex-1 flex justify-center"}>
-                    No most active iface
+                    <Trans>No most active iface</Trans>
                 </div>
             )}
             <div className={"flex justify-center"}>

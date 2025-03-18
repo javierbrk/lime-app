@@ -266,8 +266,8 @@ msgid "Cannot connect to the remote support server"
 msgstr "No hay conexión con el servidor de soporte remoto."
 
 #: plugins/lime-plugin-locate/src/locatePage.tsx:153
-msgid "Cannot load map, check your internet connection"
-msgstr "El mapa no puede cargarse, verifique la conexión a internet."
+#~ msgid "Cannot load map, check your internet connection"
+#~ msgstr "El mapa no puede cargarse, verifique la conexión a internet."
 
 #: plugins/lime-plugin-node-admin/src/screens/hotspot/src/hotspotPage.js:123
 msgid "Cannot use Radio 0, it's being used for mesh links"
@@ -295,15 +295,15 @@ msgstr "Cambiar Contraseña Compartida"
 
 #: plugins/lime-plugin-mesh-wide-config/src/components/FormFooter.tsx:40
 msgid "Changes made"
-msgstr "Los cambios fueron realizados"
+msgstr "Cambios realizados"
 
-#: plugins/lime-plugin-rx/src/sections/wired.tsx:152
+#: plugins/lime-plugin-rx/src/sections/wired.tsx:124
 msgid "Changing role to {newRole}"
-msgstr "Cambiando el rol a {newRole}"
+msgstr "Cambiando rol a {newRole}"
 
-#: plugins/lime-plugin-rx/src/sections/wired.tsx:155
+#: plugins/lime-plugin-rx/src/sections/wired.tsx:129
 msgid "Changing the role of a port may cause network interruptions. Are you sure you want to continue?"
-msgstr "Cambiando el rol del puerto puede causar problemas en la red, Desea continuar ?"
+msgstr "Cambiar el rol del puerto puede causar interrupciones de la red. ¿Estas seguro que quiere continuar?"
 
 #: plugins/lime-plugin-fbw/src/containers/scanPage/components/networkTile.js:123
 #: plugins/lime-plugin-mesh-wide/src/components/FeatureDetail/LinkDetail.tsx:144
@@ -398,6 +398,7 @@ msgstr "Configure su nueva red mesh"
 #: plugins/lime-plugin-firmware/src/confirmPage/confirmPage.js:11
 #: plugins/lime-plugin-mesh-wide-config/src/containers/NextStepFooter.tsx:118
 #: plugins/lime-plugin-mesh-wide-upgrade/src/components/nextStepFooter.tsx:148
+#: plugins/lime-plugin-rx/src/sections/wired.tsx:125
 msgid "Confirm"
 msgstr "Confirmar"
 
@@ -661,6 +662,10 @@ msgstr "Cifrado: {encryptionMethod}"
 #: plugins/lime-plugin-metrics/src/components/box/index.js:96
 msgid "Error"
 msgstr "Error"
+
+#: plugins/lime-plugin-rx/src/sections/wired.tsx:160
+msgid "Error changing role:"
+msgstr "Error al cambiar el rol"
 
 #: src/components/toast/toasts.tsx:13
 msgid "Error connecting with {nodeInfo}, is node up?"
@@ -970,8 +975,8 @@ msgid "Local services link"
 msgstr "Enlace a servicios locales"
 
 #: plugins/lime-plugin-locate/src/locateMenu.js:9
-msgid "Locate"
-msgstr "Localizar"
+#~ msgid "Locate"
+#~ msgstr "Localizar"
 
 #: src/containers/SharedPasswordLogin/sharedPasswordLogin.tsx:81
 msgid "Logging in"
@@ -1116,6 +1121,10 @@ msgstr "Nueva versión disponible!"
 msgid "No changes made"
 msgstr "No se realizaron cambios"
 
+#: plugins/lime-plugin-rx/src/sections/alignment.tsx:86
+msgid "No most active iface"
+msgstr "No existe una interfaz activa"
+
 #: plugins/lime-plugin-mesh-wide-upgrade/src/utils/upgradeStatusMessages.tsx:34
 msgid "No new version available is found"
 msgstr "No se ha encontrado una nueva versión disponible."
@@ -1166,11 +1175,15 @@ msgstr "Información de referencia sobre el nodo"
 #: plugins/lime-plugin-node-admin/src/screens/hostname.js:43
 #: plugins/lime-plugin-node-admin/src/screens/hostname.js:48
 msgid "Node Name"
-msgstr "Nombre del nodo"
+msgstr "Nombre del nodo"								
 
 #: plugins/lime-plugin-mesh-wide-upgrade/src/containers/meshWideUpgradeStatus.tsx:53
 msgid "Node is upgrading"
 msgstr "El nodo se está actualizando"
+
+#: plugins/lime-plugin-mesh-wide/src/components/FeatureDetail/RebootNodeBtn.tsx:80
+msgid "Node password"
+msgstr "Contraseña del nodo"
 
 #: plugins/lime-plugin-node-admin/src/screens/hotspot/src/components/testBoxes.js:71
 #: plugins/lime-plugin-node-admin/src/screens/hotspot/src/components/testBoxes.js:99
@@ -2063,7 +2076,7 @@ msgstr "Enlaces Wifi de Referencia"
 msgid "Wifi Password"
 msgstr "Contraseña del Wifi"
 
-#: plugins/lime-plugin-rx/src/sections/wired.tsx:274
+#: plugins/lime-plugin-rx/src/sections/wired.tsx:261
 msgid "Wired connections"
 msgstr "Conexiones cableadas"
 
@@ -2132,15 +2145,15 @@ msgstr "Tu archivo de configuración parece vacío! Debes agregar una configurac
 msgid "Your node has no internet connection"
 msgstr "Su nodo no tiene conexión a internet"
 
-#: plugins/lime-plugin-locate/src/locatePage.tsx:225
+#: plugins/lime-plugin-mesh-wide/src/containers/LocateNode.tsx:97
 msgid "cancel"
 msgstr "Cancelar"
 
-#: plugins/lime-plugin-locate/src/locatePage.tsx:211
+#: plugins/lime-plugin-mesh-wide/src/containers/LocateNode.tsx:93
 msgid "confirm location"
 msgstr "Confirmar ubicación"
 
-#: plugins/lime-plugin-locate/src/locatePage.tsx:227
+#: plugins/lime-plugin-mesh-wide/src/containers/LocateNode.tsx:99
 msgid "edit location"
 msgstr "Modificar ubicación"
 
@@ -2149,14 +2162,14 @@ msgid "for the following nodes: {nodes}"
 msgstr "para los siguientes nodos: {nodes}"
 
 #: plugins/lime-plugin-locate/src/locatePage.tsx:217
-msgid "hide community"
-msgstr "Esconder comunidad"
+#~ msgid "hide community"
+#~ msgstr "Esconder comunidad"
 
 #: plugins/lime-plugin-mesh-wide-config/src/components/modals.tsx:116
 msgid "key"
 msgstr "Clave"
 
-#: plugins/lime-plugin-locate/src/locatePage.tsx:230
+#: plugins/lime-plugin-mesh-wide/src/containers/LocateNode.tsx:102
 msgid "locate my node"
 msgstr "Ubicar mi nodo"
 
@@ -2165,8 +2178,8 @@ msgid "more than a minute ago"
 msgstr "hace más de un minuto."
 
 #: plugins/lime-plugin-locate/src/locatePage.tsx:219
-msgid "show community"
-msgstr "Mostrar comunidad"
+#~ msgid "show community"
+#~ msgstr "Mostrar comunidad"
 
 #: plugins/lime-plugin-firmware/src/confirmPage/confirmPage.js:14
 msgid "to keep the current configuration. Or ..."
